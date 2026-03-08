@@ -145,6 +145,30 @@ how:"Cible le soleaire (mollet profond). Full range of motion. Pause stretch en 
 how:"Suspendu a la barre. Monte les genoux AU DESSUS des hanches. Pas de balancement. Controle la descente. Abdos bas."},
 {id:"ab_wheel",name:"Ab wheel ou crunch cable",s:3,r:"12-15",rest:60,
 how:"Controle total. Expire en contractant fort les abdos. Ne tire pas avec les bras."}
+]},
+{id:"accessories",label:"Accessoires",day:"DIM",focus:"Abdos + Cou + Avant-bras",rpe:"6-7",
+note:"Seance courte 30-40min. Leger, controle, volume.",
+exercises:[
+{id:"hang_leg_raise",name:"Releve de jambes suspendu",s:4,r:"12-15",rest:60,
+how:"Suspendu a la barre. Monte les genoux AU DESSUS des hanches, idealement jambes tendues. Zero balancement. Controle la descente. Si trop dur jambes tendues, plie les genoux."},
+{id:"cable_crunch",name:"Crunch poulie haute",s:3,r:"15-20",rest:60,
+how:"A genoux face a la poulie. Enroule le buste vers le sol en contractant les abdos. Expire fort en bas. Ne tire PAS avec les bras, c'est le buste qui enroule."},
+{id:"plank_acc",name:"Planche",s:3,r:"60s",rest:60,
+how:"Corps parfaitement aligne. Serre abdos et fessiers. Pas de creux dans le dos, pas les fesses en l'air. Respire normalement. Si 60s est facile, ajoute du poids sur le dos."},
+{id:"ab_rollout",name:"Ab wheel rollout",s:3,r:"10-12",rest:60,
+how:"A genoux, mains sur la roue. Roule vers l'avant en gardant les abdos SERRES. Ne laisse PAS le bas du dos se creuser. Reviens en contractant les abdos. Si trop dur, limite l'amplitude."},
+{id:"neck_curl",name:"Neck curl (flexion cou)",s:3,r:"15-20",rest:60,
+how:"Allonge sur un banc, tete dans le vide. Place un poids (disque + serviette) sur le front. Flechis le cou pour amener le menton vers la poitrine. Mouvement LENT et controle. Commence TRES leger (2-5kg)."},
+{id:"neck_ext",name:"Neck extension (extension cou)",s:3,r:"15-20",rest:60,
+how:"Allonge face vers le bas sur un banc, tete dans le vide. Disque + serviette sur l'arriere du crane. Etends le cou vers le haut. Lent et controle. Meme charge que les flexions. Le cou grossit VITE."},
+{id:"neck_lateral",name:"Flexion laterale cou",s:2,r:"15/cote",rest:60,
+how:"Debout ou assis. Main sur le cote de la tete, resiste avec la main pendant que tu penches la tete. Ou allonge sur le cote avec un poids. Les deux cotes. Leger, juste la resistance."},
+{id:"wrist_curl",name:"Wrist curl (flexion poignet)",s:3,r:"15-20",rest:45,
+how:"Assis, avant-bras poses sur les cuisses, paumes vers le haut. Haltere dans la main. Flechis le poignet pour monter l'haltere. Descente lente. Leger, beaucoup de reps. Ca brule vite."},
+{id:"rev_wrist_curl",name:"Reverse wrist curl",s:3,r:"15-20",rest:45,
+how:"Meme position mais paumes vers le BAS. Etends le poignet vers le haut. Plus dur, prends plus leger que les wrist curls normaux. Cible le dessus de l'avant-bras."},
+{id:"farmer_walk",name:"Farmer walk",s:3,r:"30-40m",rest:90,
+how:"Prends les halteres les plus lourds que tu peux tenir. Marche en ligne droite, dos droit, epaules basses. Serre fort. Quand tu peux plus tenir, pose. Excellent pour la poigne et les trapezes."}
 ]}
 ];
 
@@ -197,7 +221,7 @@ const day=D[DI],ct=h("div",{style:{paddingTop:"20px"}});
 
 // Header
 ct.appendChild(h("div",{style:{marginBottom:"24px"}},
-h("div",{style:{fontSize:"13px",color:"var(--sub)",fontWeight:"500",marginBottom:"4px"}},"Semaine "+((Math.floor(db.w.length/6)||0)+1)+" \u00B7 "+db.w.length+" seances"),
+h("div",{style:{fontSize:"13px",color:"var(--sub)",fontWeight:"500",marginBottom:"4px"}},"Semaine "+((Math.floor(db.w.length/7)||0)+1)+" \u00B7 "+db.w.length+" seances"),
 h("div",{style:{fontSize:"28px",fontWeight:"700",letterSpacing:"-0.5px"}},"Ton programme")));
 
 // Day pills
@@ -386,7 +410,7 @@ h("span",{},t.i),h("span",{style:{color:V===t.id?"var(--accent)":"var(--dim)"}},
 return nav}
 
 // Init
-const dm={1:0,2:1,3:2,4:3,5:4,6:5,0:0};DI=dm[new Date().getDay()]||0;
+const dm={1:0,2:1,3:2,4:3,5:4,6:5,0:6};DI=dm[new Date().getDay()];
 load();ren();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
