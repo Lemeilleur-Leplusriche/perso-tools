@@ -15,7 +15,7 @@
 html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fi{animation:fadeIn .25s ease both}
+.fi-once{animation:fadeIn .25s ease both}
 .app{max-width:430px;margin:0 auto;padding:0 16px 90px}
 
 /* Nav */
@@ -242,7 +242,7 @@ if(day.asym)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--accent)"
 // Exercises
 day.exercises.forEach((ex,i)=>{
 const pr=db.pr[ex.id],tk="h_"+ex.id,open=TIP[tk];
-const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:open?"14px":"8px",animationDelay:i*40+"ms",cursor:"pointer",border:open?"1px solid var(--accent)":"1px solid transparent",borderLeft:ex.prio?"3px solid var(--accent)":ex.asym?"3px solid var(--yellow)":"3px solid transparent",transition:"all .2s"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
+const card=h("div",{style:{background:open?"#1f1f1f":"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:open?"14px":"8px",cursor:"pointer",borderTop:open?"1px solid var(--accent)":"1px solid var(--border)",borderRight:open?"1px solid var(--accent)":"1px solid var(--border)",borderBottom:open?"1px solid var(--accent)":"1px solid var(--border)",borderLeft:ex.prio?"3px solid var(--accent)":ex.asym?"3px solid var(--yellow)":"3px solid var(--border)",transition:"background .2s"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
 
 // Name row
 card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
@@ -291,7 +291,7 @@ if(day&&day.asym)ct.appendChild(h("div",{style:{fontSize:"11px",color:"var(--acc
 
 w.ex.forEach((ex,ei)=>{
 const pr=db.pr[ex.id],tk=ex.id,open=TIP[tk];
-const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",marginBottom:"14px",overflow:"hidden",animationDelay:ei*30+"ms",border:open?"1px solid var(--accent)":"1px solid var(--border)",borderLeft:ex.asym?"3px solid var(--yellow)":ex.prio?"3px solid var(--accent)":"3px solid var(--border)"}});
+const card=h("div",{style:{background:open?"#1f1f1f":"var(--card)",borderRadius:"14px",marginBottom:"14px",overflow:"hidden",borderTop:open?"1px solid var(--accent)":"1px solid var(--border)",borderRight:open?"1px solid var(--accent)":"1px solid var(--border)",borderBottom:open?"1px solid var(--accent)":"1px solid var(--border)",borderLeft:ex.asym?"3px solid var(--yellow)":ex.prio?"3px solid var(--accent)":"3px solid var(--border)"}});
 
 // Header
 const hdr=h("div",{style:{padding:"14px 16px",cursor:"pointer",display:"flex",justifyContent:"space-between",alignItems:"center"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
@@ -368,7 +368,7 @@ ct.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",marginBottom:"20
 if(!db.w.length)return ct.appendChild(h("div",{style:{color:"var(--dim)",textAlign:"center",padding:"60px 0",fontSize:"14px"}},"Aucune seance")),ct;
 [...db.w].reverse().forEach((w,i)=>{
 const dd=D.find(d=>d.id===w.dayId);
-const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:"8px",animationDelay:i*25+"ms"}});
+const card=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:"8px",animationDelay:i*25+"ms"}});
 card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"8px"}},
 h("div",{style:{fontWeight:"600",fontSize:"15px"}},w.dayLabel),
 h("div",{style:{color:"var(--sub)",fontSize:"12px"}},fd(w.date)+" \u00B7 "+w.dur+"min")));
@@ -403,7 +403,7 @@ ct.appendChild(btns);
 if(SE){
 const data=gCD(SE),exo=allE.find(e=>e.id===SE);
 if(data.length){
-const box=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"16px"}});
+const box=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"16px"}});
 box.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" — Charge"));
 const mx=Math.max(...data.map(d=>d.wt)),mn=Math.min(...data.map(d=>d.wt)),rng=mx-mn||1;
 const bars=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"3px",height:"100px"}});
