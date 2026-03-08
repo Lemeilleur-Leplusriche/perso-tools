@@ -5,288 +5,389 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a1a">
+<meta name="theme-color" content="#111">
 <link rel="manifest" href="manifest.json">
-<title>PPL Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>PPL</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-html,body{background:#0a0a1a;color:#e8e8f0;font-family:'JetBrains Mono',monospace;min-height:100vh;overflow-x:hidden}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#777;--dim:#444;--accent:#e8734a;--accent2:#e8734a22;--green:#4ade80;--blue:#60a5fa;--yellow:#fbbf24}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
-@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
-@keyframes prPulse{0%,100%{opacity:1}50%{opacity:.5}}
-.card{animation:slideUp .3s ease-out both}.app{max-width:480px;margin:0 auto;padding-bottom:80px;min-height:100vh}
-.btn{border:none;border-radius:12px;font-weight:800;cursor:pointer;font-family:inherit}
-.pr-badge{background:linear-gradient(135deg,#ff6b4a,#ffd700);color:#000;font-weight:900;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px;letter-spacing:1px;animation:prPulse 2s ease-in-out infinite}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#0a0a1aee;backdrop-filter:blur(20px);border-top:1px solid #1a1a3e;display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100}
-.nav-btn{flex:1;background:none;border:none;padding:8px 0;display:flex;flex-direction:column;align-items:center;cursor:pointer;gap:2px}
-.nav-btn span:first-child{font-size:20px}.nav-label{font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
-.input-set{background:#0a0a1a;border:1px solid #222;border-radius:8px;color:#fff;padding:7px 6px;font-size:14px;text-align:center;font-family:inherit;font-weight:600;outline:none;width:100%}
-.input-set:focus{border-color:var(--accent)}
-.timer-overlay{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center}
-.activation{background:#1a1a0a;border:1px dashed #555500;border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#aaaa55}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn .25s ease both}
+.app{max-width:430px;margin:0 auto;padding:0 16px 90px}
+
+/* Nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#111e;backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100}
+.nav button{flex:1;background:none;border:none;padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
+.nav button span:first-child{font-size:18px}
+.nav button span:last-child{font-size:9px;font-weight:600;letter-spacing:.3px}
+
+/* Timer */
+.timer-bg{position:fixed;inset:0;z-index:999;background:#000e;backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
 <div id="app" class="app"></div>
 <script>
-const DAYS=[
-{id:"push_heavy",label:"Push Lourd",day:"Lundi",focus:"Haut pecs + epaules + triceps",rpe:"8-9",color:"#ff6b4a",activation:"2x20 pompes lentes",
+const D=[
+{id:"push_heavy",label:"Push Lourd",day:"LUN",focus:"Pecs + Epaules + Triceps",rpe:"8-9",
 exercises:[
-{id:"inc_db_h",name:"Dev incline halteres (30)",sets:4,reps:"6-8",rest:"2-3 min",dw:24,tips:"PRIORITE #1. Lourd. Coudes a 45 du corps. Descente 3s au niveau des clavicules. Pousse en haut et legerement vers l'interieur.",cues:["Incline 30 PAS 45","Coudes 45","Descente 3s","Pousse interieur"],priority:true},
-{id:"inc_bar_h",name:"Dev incline barre (30)",sets:3,reps:"8-10",rest:"2 min",dw:30,note:"Monter semaine pro",tips:"Charge progressive. Barre descend vers les clavicules.",cues:["Charge progressive","Barre vers clavicules"]},
-{id:"cable_fly_low",name:"Cable fly low-to-high",sets:3,reps:"12-15",rest:"60s",dw:9,tips:"Cables en bas vers le haut. Cible haut des pecs. Squeeze en haut.",cues:["Cables en bas","Bas vers haut","Squeeze"]},
-{id:"flat_db",name:"Dev couche halteres (plat)",sets:3,reps:"8-10",rest:"2 min",dw:24,tips:"Secondaire. Omoplates serrees, pieds ancres.",cues:["Omoplates serrees","Secondaire"]},
-{id:"ohp_db",name:"Dev militaire halteres",sets:4,reps:"8-10",rest:"2 min",dw:12,tips:"Epaules 3D. Pousse verticale. Pas de cambrure.",cues:["Epaules 3D","Verticale","Pas de cambrure"]},
-{id:"lat_raise_h",name:"Elevations laterales",sets:4,reps:"12-15",rest:"60s",dw:8,tips:"Leger, controle. Penche en avant. Parallele au sol max. Pas d'elan.",cues:["Leger","Controle","Pas d'elan"]},
-{id:"dips_h",name:"Dips lestes ou pushdown",sets:3,reps:"8-12",rest:"90s",dw:0,tips:"Triceps compose. Dips penche en avant = pecs, droit = triceps.",cues:["Triceps compose"]},
-{id:"tri_ext_h",name:"Extension triceps poulie",sets:3,reps:"12-15",rest:"60s",dw:24,tips:"Finition. Coudes fixes, extension complete, squeeze.",cues:["Coudes fixes","Squeeze"]}
+{id:"inc_db_h",name:"Dev incline halteres 30°",s:4,r:"6-8",rest:150,dw:24,prio:1,
+how:"Banc a 30° PAS 45°. Omoplates serrees en arriere et en bas. Descente lente 3s jusqu'aux clavicules, coudes a 45° du corps. Pousse en haut en convergent legerement les halteres vers l'interieur."},
+{id:"inc_bar_h",name:"Dev incline barre 30°",s:3,r:"8-10",rest:120,dw:30,note:"⬆ Monter semaine pro",
+how:"Meme angle 30°. La barre descend vers les clavicules, pas vers les tetas. Pousse verticale. Garde les omoplates serrees pendant tout le mouvement."},
+{id:"cable_fly_low",name:"Cable fly low-to-high",s:3,r:"12-15",rest:60,dw:9,
+how:"Poulies en position basse. Mouvement en arc de bas vers le haut, mains se rejoignent devant le haut des pecs. Squeeze 1s en haut. Leger, pas d'ego."},
+{id:"flat_db",name:"Dev couche halteres",s:3,r:"8-10",rest:120,dw:24,
+how:"Secondaire. Omoplates serrees, pieds bien plantes au sol. Descente controlee, coudes a 45°. Pas besoin de forcer, les inclines font le gros du boulot."},
+{id:"ohp_db",name:"Dev militaire halteres",s:4,r:"8-10",rest:120,dw:12,
+how:"Debout ou assis. Pousse bien verticale au dessus de la tete. Gainage abdos + fessiers serre. Si tu cambres le dos c'est trop lourd, baisse."},
+{id:"lat_raise_h",name:"Elevations laterales",s:4,r:"12-15",rest:60,dw:8,
+how:"Legerement penche en avant. Monte les bras jusqu'a parallele au sol, PAS au dessus. Pouces legerement vers le bas. Zero elan. Si tu balances c'est trop lourd."},
+{id:"dips_h",name:"Dips ou pushdown",s:3,r:"8-12",rest:90,dw:0,
+how:"Dips : penche en avant pour pecs, droit pour triceps. Descends a 90° minimum aux coudes. Si +15 reps au PDC, ajoute du lest."},
+{id:"tri_ext_h",name:"Extension triceps poulie",s:3,r:"12-15",rest:60,dw:24,
+how:"Coudes COLLES au corps, ils ne bougent pas. Seuls les avant-bras travaillent. Extension complete en bas, squeeze 1s. Remontee controlee."}
 ]},
-{id:"pull_heavy",label:"Pull Lourd",day:"Mardi",focus:"Dos epaisseur/largeur + biceps",rpe:"8-9",color:"#4aadff",asymmetry:true,
-note:"Dos : pense COUDES, pas mains. Tes mains = des crochets. STRAPS obligatoires sur tous les tirages.",
+{id:"pull_heavy",label:"Pull Lourd",day:"MAR",focus:"Dos + Biceps",rpe:"8-9",asym:1,
 exercises:[
-{id:"pullups_h",name:"Tractions prise large (lestees)",sets:4,reps:"6-10",rest:"2-3 min",dw:0,tips:"Roi du dos. STRAPS. Leste si >10 reps. Omoplates vers le bas d'abord. Focus mental cote gauche.",cues:["STRAPS","Omoplates d'abord","Focus lat gauche","Leste si >10"],priority:true},
-{id:"row_bar_h",name:"Rowing barre pronation",sets:4,reps:"6-8",rest:"2-3 min",dw:45,tips:"Lourd. Buste 45, dos PLAT. Tire vers le nombril. Squeeze omoplates. Equilibre G/D.",cues:["Lourd","Dos plat 45","Nombril","STRAPS"]},
-{id:"db_row_h",name:"Rowing haltere 1 bras",sets:3,reps:"8-10",rest:"90s",dw:12,note:"Go 14 semaine pro",tips:"Commence TOUJOURS par le cote GAUCHE. Meme charge des deux cotes. Coude vers la hanche. Squeeze omoplate 2s.",cues:["GAUCHE d'abord","Coude vers hanche","Squeeze 2s","Meme charge G/D"],asymmetry:true},
-{id:"pullover_h",name:"Pullover poulie haute",sets:3,reps:"12-15",rest:"60s",dw:32,tips:"Isole le grand dorsal. Bras quasi tendus. Focus contraction lat gauche.",cues:["Grand dorsal","Bras tendus","Focus lat gauche"]},
-{id:"face_pull_h",name:"Face pulls",sets:4,reps:"15-20",rest:"60s",dw:24,tips:"NON NEGOCIABLE. Poulie haute. Tire vers les oreilles, coudes hauts. Rotation externe.",cues:["NON NEGOCIABLE","Coudes hauts","Rotation externe"],priority:true},
-{id:"shrugs_h",name:"Shrugs halteres",sets:3,reps:"12-15",rest:"60s",dw:24,tips:"Trapezes. Monte DROIT vers les oreilles. Hold 2s. PAS de rotation.",cues:["Droit vers oreilles","Hold 2s","Pas de rotation"]},
-{id:"ez_curl_h",name:"Curl barre EZ",sets:3,reps:"8-10",rest:"90s",dw:30,tips:"Strict, pas de triche. Coudes fixes. Si le buste bouge = trop lourd.",cues:["Strict","Coudes fixes","Pas de triche"]},
-{id:"hammer_h",name:"Curl marteau",sets:3,reps:"12-15",rest:"60s",dw:12,tips:"Brachio-radial. Prise neutre. Descente controlee.",cues:["Prise neutre","Descente controlee"]}
+{id:"pullups_h",name:"Tractions prise large",s:4,r:"6-10",rest:150,dw:0,prio:1,
+how:"ROI DU DOS. Utilise des STRAPS. Initie le mouvement en tirant les omoplates vers le bas, pas les bras. Menton au dessus de la barre. Descente complete bras tendus. Focus mental sur le cote gauche a chaque rep."},
+{id:"row_bar_h",name:"Rowing barre pronation",s:4,r:"6-8",rest:150,dw:45,
+how:"Buste penche a 45°, dos PLAT. STRAPS. Tire la barre vers le nombril, pas vers la poitrine. Squeeze les omoplates 1s en haut. Equilibre la force gauche/droite."},
+{id:"db_row_h",name:"Rowing haltere 1 bras",s:3,r:"8-10",rest:90,dw:12,note:"⬆ Go 14 semaine pro",asym:1,
+how:"⚠️ TOUJOURS commencer par le cote GAUCHE. Meme charge des deux cotes. Genou + main droite sur le banc, dos plat parallele au sol. Tire le coude vers la HANCHE pas vers l'epaule. Squeeze l'omoplate 2s en haut. Descente lente 2-3s."},
+{id:"pullover_h",name:"Pullover poulie haute",s:3,r:"12-15",rest:60,dw:32,
+how:"Isole le grand dorsal. Debout face a la poulie haute. Bras quasi tendus, tire en arc vers les hanches. Concentre toi sur la contraction du lat gauche."},
+{id:"face_pull_h",name:"Face pulls",s:4,r:"15-20",rest:60,dw:24,prio:1,
+how:"NON NEGOCIABLE a chaque seance pull. Poulie haute. Tire les mains vers les oreilles, COUDES HAUTS. En fin de mouvement, rotation externe : les mains finissent au dessus des coudes. Leger = mieux."},
+{id:"shrugs_h",name:"Shrugs halteres",s:3,r:"12-15",rest:60,dw:24,
+how:"Monte les epaules DROIT vers les oreilles. Hold 2s en haut. Descente lente. Ne roule JAMAIS les epaules, c'est inutile et dangereux."},
+{id:"ez_curl_h",name:"Curl barre EZ",s:3,r:"8-10",rest:90,dw:30,
+how:"Prise sur les parties angulees interieures de la barre. Coudes FIXES le long du corps. Si ton buste bouge pour generer de l'elan, c'est trop lourd. Extension complete en bas."},
+{id:"hammer_h",name:"Curl marteau",s:3,r:"12-15",rest:60,dw:12,
+how:"Prise neutre, paumes face a face. Monte le long du corps sans tourner le poignet. Cible le brachial et l'avant-bras. Descente controlee 2s."}
 ]},
-{id:"legs_quad",label:"Legs Quadri",day:"Mercredi",focus:"Quadriceps + ischios + mollets + abdos",rpe:"8-9",color:"#50e88e",
+{id:"legs_quad",label:"Legs Quadri",day:"MER",focus:"Quads + Mollets + Abdos",rpe:"8-9",
 exercises:[
-{id:"squat",name:"Squat barre",sets:4,reps:"6-8",rest:"3 min",tips:"Roi des exos. Profond (parallele minimum). Pieds largeur epaules. Hanches en arriere. Pousse le sol.",cues:["Profond","Hanches en arriere","Pousse le sol"],priority:true},
-{id:"leg_press_q",name:"Presse a cuisses",sets:4,reps:"10-12",rest:"2 min",tips:"Pieds milieu, largeur epaules. 90 genoux. Dos colle. Pousse talons.",cues:["Pieds milieu","Dos colle","Pousse talons"]},
-{id:"walking_lunge",name:"Fentes marchees",sets:3,reps:"10/jambe",rest:"2 min",tips:"Stabilite + glutes. Grand pas, genou arriere frole le sol.",cues:["Grand pas","Genou frole sol"]},
-{id:"leg_ext_q",name:"Leg extension",sets:3,reps:"12-15",rest:"60s",tips:"Squeeze en haut 2 sec. Extension complete.",cues:["Squeeze 2s","Extension complete"]},
-{id:"leg_curl_q",name:"Leg curl allonge",sets:4,reps:"10-12",rest:"90s",tips:"Ischios. Squeeze en haut. Descente 2-3s.",cues:["Squeeze","Descente 2-3s"]},
-{id:"calf_stand",name:"Mollets debout",sets:4,reps:"12-15",rest:"60s",tips:"Full amplitude. Pause 2s en haut. Etire en bas.",cues:["Full ROM","Pause 2s","Etire en bas"]},
-{id:"crunch_cable",name:"Crunch poulie haute",sets:3,reps:"15-20",rest:"60s",tips:"Abdos. Enroule le buste, pas de flexion de hanche.",cues:["Enroule le buste"]},
-{id:"plank",name:"Planche",sets:3,reps:"45-60s",rest:"60s",tips:"Gainage. Corps aligne, fessiers serres.",cues:["Corps aligne","Fessiers serres"]}
+{id:"squat",name:"Squat barre",s:4,r:"6-8",rest:180,prio:1,
+how:"ROI DES EXOS. Pieds largeur epaules, pointes legerement ouvertes. Initie en poussant les hanches EN ARRIERE. Descends au moins a parallele. Genoux dans l'axe des pieds. Pousse le sol avec tout le pied en remontant."},
+{id:"leg_press_q",name:"Presse a cuisses",s:4,r:"10-12",rest:120,
+how:"Pieds au milieu de la plateforme, largeur epaules. Descends jusqu'a 90° aux genoux, le bas du dos ne decolle PAS du dossier. Pousse avec les talons. Ne verrouille jamais en haut."},
+{id:"walking_lunge",name:"Fentes marchees",s:3,r:"10/jambe",rest:120,
+how:"Grand pas en avant. Genou arriere frole le sol. Torse droit, regard devant. Pousse avec le talon de la jambe avant pour te relever. Alterne."},
+{id:"leg_ext_q",name:"Leg extension",s:3,r:"12-15",rest:60,
+how:"Regle le dossier pour que tes genoux soient alignes avec l'axe de la machine. Tends COMPLETEMENT la jambe, squeeze le quadriceps 2s en haut. Descente controlee."},
+{id:"leg_curl_q",name:"Leg curl allonge",s:4,r:"10-12",rest:90,
+how:"Contracte les ischios pour amener le pied vers les fesses. Squeeze 1s en haut. Descente LENTE 2-3s. Pas d'elan."},
+{id:"calf_stand",name:"Mollets debout",s:4,r:"12-15",rest:60,
+how:"Sur une marche, talons dans le vide. Monte sur la pointe LE PLUS HAUT possible. Pause 2s en haut. Descends lentement en etirant bien. Full range of motion = cle pour les mollets."},
+{id:"crunch_cable",name:"Crunch poulie haute",s:3,r:"15-20",rest:60,
+how:"A genoux face a la poulie. Enroule le buste vers le sol, pas de flexion de hanche. Expire fort en crunching. Contracte les abdos, pas les bras."},
+{id:"plank",name:"Planche",s:3,r:"45-60s",rest:60,
+how:"Corps parfaitement aligne : pas de creux dans le dos, pas les fesses en l'air. Serre les fessiers et les abdos. Respire normalement."}
 ]},
-{id:"push_vol",label:"Push Volume",day:"Jeudi",focus:"Haut pecs (volume) + epaules",rpe:"7-8",color:"#ff8c4a",activation:"2x20 pompes lentes",
-note:"Volume. Moins lourd, plus de reps. Tempo 3-1-1 (3s descente, 1s pause, 1s montee).",
+{id:"push_vol",label:"Push Volume",day:"JEU",focus:"Pecs volume + Epaules",rpe:"7-8",
+note:"Tempo 3-1-1 : 3s descente, 1s pause, 1s montee",
 exercises:[
-{id:"inc_machine",name:"Dev incline machine/Smith",sets:4,reps:"10-12",rest:"90s",tips:"Volume, tempo 3-1-1. Controle total.",cues:["Tempo 3-1-1","Controle total"]},
-{id:"inc_fly",name:"Ecarte incline halteres (30)",sets:3,reps:"12-15",rest:"60s",tips:"Stretch max en bas. Squeeze en haut.",cues:["Stretch en bas","Squeeze en haut"]},
-{id:"cable_fly_vol",name:"Cable fly low-to-high",sets:3,reps:"15-20",rest:"60s",tips:"Pump maximum. Leger, plein de reps.",cues:["Pump max","Leger"]},
-{id:"flat_db_vol",name:"Dev couche halteres",sets:3,reps:"10-12",rest:"90s",tips:"Secondaire. Omoplates serrees.",cues:["Secondaire"]},
-{id:"lat_raise_drop",name:"Elevations lat (drop set)",sets:4,reps:"12-15+drop",rest:"60s",tips:"Derniere serie drop set : fais tes reps, baisse 30%, continue a l'echec.",cues:["Drop set derniere serie","-30% et echec"]},
-{id:"rear_delt",name:"Oiseau inverse (rear delt)",sets:3,reps:"15-20",rest:"60s",tips:"Epaule arriere. Penche, coudes en arriere. Leger.",cues:["Epaule arriere","Leger"]},
-{id:"skull_crush",name:"Skull crushers",sets:3,reps:"10-12",rest:"90s",tips:"Longue portion triceps. Barre EZ. Descends vers le front.",cues:["Longue portion","Barre vers front"]},
-{id:"kickback",name:"Kickbacks ou pushdown corde",sets:3,reps:"15",rest:"60s",tips:"Finition pump. Extension complete.",cues:["Finition","Squeeze"]}
+{id:"inc_machine",name:"Dev incline machine/Smith",s:4,r:"10-12",rest:90,
+how:"TEMPO 3-1-1 sur chaque rep. 3s pour descendre, 1s pause en bas, 1s pour monter. Controle total, sens chaque fibre du haut des pecs travailler."},
+{id:"inc_fly",name:"Ecarte incline halteres 30°",s:3,r:"12-15",rest:60,
+how:"Banc a 30°. Bras legerement flechis. Descends en etirant bien les pecs. Remonte en serrant. Ne descends pas trop bas, ca force sur l'epaule."},
+{id:"cable_fly_vol",name:"Cable fly low-to-high",s:3,r:"15-20",rest:60,
+how:"Pump maximum. Leger, plein de reps. Squeeze en haut a chaque rep. C'est la que le haut des pecs va bruler."},
+{id:"flat_db_vol",name:"Dev couche halteres",s:3,r:"10-12",rest:90,
+how:"Secondaire. Omoplates serrees. Descente controlee. Pas besoin de forcer, les inclines font le gros du boulot."},
+{id:"lat_raise_drop",name:"Elevations lat + drop set",s:4,r:"12-15",rest:60,
+how:"Derniere serie = DROP SET : fais tes reps, pose les halteres, prends 30% plus leger, continue a l'echec. Sensation de brulure garantie."},
+{id:"rear_delt",name:"Oiseau inverse rear delt",s:3,r:"15-20",rest:60,
+how:"Penche en avant. Tire les coudes vers l'arriere en ouvrant les bras. Epaule arriere. Tres leger, juste la contraction."},
+{id:"skull_crush",name:"Skull crushers",s:3,r:"10-12",rest:90,
+how:"Barre EZ. Descends la barre vers le FRONT pas derriere la tete. Coudes fixes, seuls les avant-bras bougent. Cible la longue portion du triceps."},
+{id:"kickback",name:"Pushdown corde ou kickbacks",s:3,r:"15",rest:60,
+how:"Finition pump. Extension complete, squeeze en bas. Sens les triceps bruler."}
 ]},
-{id:"pull_vol",label:"Pull Volume",day:"Vendredi",focus:"Dos largeur + biceps",rpe:"7-8",color:"#4ac8ff",asymmetry:true,
-note:"Machines + cables. Focus connexion neuro-musculaire et temps sous tension.",
+{id:"pull_vol",label:"Pull Volume",day:"VEN",focus:"Dos largeur + Biceps",rpe:"7-8",asym:1,
+note:"Machines + cables. Focus connexion neuro-musculaire",
 exercises:[
-{id:"lat_pull",name:"Lat pulldown prise large",sets:4,reps:"10-12",rest:"90s",tips:"Tire les coudes vers le bas. Omoplates en bas. Squeeze 1s. Focus lat gauche.",cues:["Coudes vers le bas","Squeeze 1s","Focus lat gauche"]},
-{id:"row_cable",name:"Rowing poulie basse (V-bar)",sets:4,reps:"10-12",rest:"90s",tips:"Serre omoplates 2 sec. Dos droit, tire vers le nombril.",cues:["Omoplates 2s","Dos droit"]},
-{id:"tbar_row",name:"Rowing machine (T-bar)",sets:3,reps:"10-12",rest:"90s",tips:"Epaisseur milieu dos. Prise serree. Squeeze.",cues:["Epaisseur","Prise serree"]},
-{id:"pullover_vol",name:"Pullover poulie haute",sets:3,reps:"15-20",rest:"60s",tips:"Grand dorsal isole. Bras tendus. Focus lat gauche.",cues:["Grand dorsal","Focus lat gauche"]},
-{id:"face_pull_vol",name:"Face pulls",sets:4,reps:"15-20",rest:"60s",tips:"Chaque seance pull. Coudes hauts, rotation externe.",cues:["Chaque seance pull","Rotation externe"],priority:true},
-{id:"curl_incline",name:"Curl incline halteres",sets:3,reps:"10-12",rest:"60s",tips:"Stretch long biceps. Banc 45, bras pendants. Pas d'elan.",cues:["Banc 45","Stretch long","Pas d'elan"]},
-{id:"curl_spider",name:"Curl concentre ou spider",sets:3,reps:"12-15",rest:"60s",tips:"Peak contraction. Squeeze 1s. Descente lente.",cues:["Peak contraction","Squeeze 1s"]}
+{id:"lat_pull",name:"Lat pulldown prise large",s:4,r:"10-12",rest:90,
+how:"Tire les COUDES vers le bas, pas les mains. Omoplates vers le bas. Squeeze 1s en bas. Focus mental sur la contraction du lat gauche."},
+{id:"row_cable",name:"Rowing poulie basse V-bar",s:4,r:"10-12",rest:90,
+how:"Dos droit. Tire la V-bar vers le nombril. SERRE les omoplates 2 secondes en fin de mouvement. Ne te penche pas en arriere."},
+{id:"tbar_row",name:"Rowing machine T-bar",s:3,r:"10-12",rest:90,
+how:"Epaisseur du milieu du dos. Prise serree. Tire vers le ventre. Squeeze omoplates."},
+{id:"pullover_vol",name:"Pullover poulie haute",s:3,r:"15-20",rest:60,
+how:"Grand dorsal isole. Bras quasi tendus. Tire en arc de cercle vers les hanches. Focus contraction lat gauche."},
+{id:"face_pull_vol",name:"Face pulls",s:4,r:"15-20",rest:60,prio:1,
+how:"A chaque seance pull. Coudes hauts, tire vers les oreilles. Rotation externe en fin de mouvement. Leger."},
+{id:"curl_incline",name:"Curl incline halteres",s:3,r:"10-12",rest:60,
+how:"Banc a 45°, bras pendants derriere toi. Ca donne un stretch max du biceps. Monte sans elan. Sens l'etirement en bas de chaque rep."},
+{id:"curl_spider",name:"Curl concentre ou spider",s:3,r:"12-15",rest:60,
+how:"Peak contraction. Squeeze fort 1s en haut de chaque rep. Descente lente. Fais le bruler."}
 ]},
-{id:"legs_ischio",label:"Legs Ischio",day:"Samedi",focus:"Ischios + fessiers + mollets + abdos",rpe:"7-8",color:"#50c878",
+{id:"legs_ischio",label:"Legs Ischio",day:"SAM",focus:"Ischios + Fessiers + Abdos",rpe:"7-8",
 exercises:[
-{id:"rdl",name:"Romanian Deadlift (RDL)",sets:4,reps:"8-10",rest:"2-3 min",tips:"Ischios + fessiers. Dos droit. Fesses en arriere, barre colle aux jambes. Serre fessiers en haut.",cues:["Dos droit","Fesses en arriere","Barre colle","Serre fessiers"],priority:true},
-{id:"press_high",name:"Presse pieds hauts serres",sets:3,reps:"10-12",rest:"2 min",tips:"Ischios + glutes. Pieds en haut de la plateforme, serres.",cues:["Pieds hauts","Serres","Pousse talons"]},
-{id:"bulgarian",name:"Bulgarian split squat",sets:3,reps:"10/jambe",rest:"90s",tips:"Unilateral, profond. Pied arriere sur banc. Grand pas.",cues:["Unilateral","Profond"]},
-{id:"leg_curl_i",name:"Leg curl allonge",sets:4,reps:"10-12",rest:"60s",tips:"Pause en contraction 2s. Descente lente.",cues:["Pause 2s","Descente lente"]},
-{id:"hip_thrust",name:"Hip thrust",sets:3,reps:"12-15",rest:"90s",tips:"Squeeze fessiers 2s en haut. Pousse verticale.",cues:["Squeeze 2s","Pousse verticale"]},
-{id:"calf_seated",name:"Mollets assis",sets:4,reps:"15-20",rest:"60s",tips:"Soleaire. Full ROM. Pause en bas et en haut.",cues:["Soleaire","Full ROM"]},
-{id:"leg_raise",name:"Releve de jambes suspendu",sets:3,reps:"12-15",rest:"60s",tips:"Abdos bas. Pas de balancement. Genoux au-dessus des hanches.",cues:["Pas balancement","Genoux hauts"]},
-{id:"ab_wheel",name:"Ab wheel ou crunch cable",sets:3,reps:"12-15",rest:"60s",tips:"Abdos. Controle total. Expire en contractant.",cues:["Controle","Expire"]}
+{id:"rdl",name:"Romanian Deadlift RDL",s:4,r:"8-10",rest:150,prio:1,
+how:"Debout, barre contre les cuisses. Pousse les fesses EN ARRIERE, jambes quasi tendues. La barre GLISSE le long des cuisses et tibias. Dos PLAT toute la duree. Descends jusqu'a sentir l'etirement des ischios. Remonte en serrant les fessiers en haut."},
+{id:"press_high",name:"Presse pieds hauts serres",s:3,r:"10-12",rest:120,
+how:"Pieds EN HAUT de la plateforme et SERRES. Ca cible les ischios et les fessiers au lieu des quads. Pousse avec les talons."},
+{id:"bulgarian",name:"Bulgarian split squat",s:3,r:"10/jambe",rest:90,
+how:"Pied arriere sur un banc. Grand pas en avant. Descends profond, genou arriere vers le sol. Excellent pour la stabilite et les fessiers. Douloureux mais efficace."},
+{id:"leg_curl_i",name:"Leg curl allonge",s:4,r:"10-12",rest:60,
+how:"Pause en contraction 2s en haut. La descente doit etre LENTE, 2-3s. C'est la phase excentrique qui fait grossir les ischios. Pas d'elan."},
+{id:"hip_thrust",name:"Hip thrust",s:3,r:"12-15",rest:90,
+how:"Haut du dos sur le banc, pieds a plat au sol. Pousse les hanches vers le plafond. SQUEEZE les fessiers 2s en haut. C'est le meilleur exo fessiers."},
+{id:"calf_seated",name:"Mollets assis",s:4,r:"15-20",rest:60,
+how:"Cible le soleaire (mollet profond). Full range of motion. Pause stretch en bas, pause squeeze en haut. Lent et controle."},
+{id:"leg_raise",name:"Releve de jambes suspendu",s:3,r:"12-15",rest:60,
+how:"Suspendu a la barre. Monte les genoux AU DESSUS des hanches. Pas de balancement. Controle la descente. Abdos bas."},
+{id:"ab_wheel",name:"Ab wheel ou crunch cable",s:3,r:"12-15",rest:60,
+how:"Controle total. Expire en contractant fort les abdos. Ne tire pas avec les bras."}
 ]}
 ];
 
-const SK="ppl-v3",todayStr=()=>new Date().toISOString().slice(0,10),fmtDate=d=>{const[y,m,day]=d.split("-");return day+"/"+m};
-let S={view:"workout",di:0,cw:null,showT:false,tips:{},selEx:null,ts:90,ti:90,tr:false,tiv:null};
-let db={workouts:[],prs:{}};
-function loadDB(){try{const r=localStorage.getItem(SK);if(r)db=JSON.parse(r)}catch(e){}}
-function saveDB(){try{localStorage.setItem(SK,JSON.stringify(db))}catch(e){}}
+const SK="ppl-v4",td=()=>new Date().toISOString().slice(0,10),fd=d=>{const p=d.split("-");return p[2]+"/"+p[1]};
+let V="home",DI=0,CW=null,TIP={},SE=null,TS=90,TI=90,TR=false,TV=null,ST=false;
+let db={w:[],pr:{}};
+function load(){try{const r=localStorage.getItem(SK);if(r)db=JSON.parse(r)}catch(e){}}
+function save(){try{localStorage.setItem(SK,JSON.stringify(db))}catch(e){}}
 
-function startT(s){clearInterval(S.tiv);S.ts=s;S.ti=s;S.tr=true;S.tiv=setInterval(()=>{if(S.ts>0){S.ts--;render()}else{clearInterval(S.tiv);S.tr=false;try{navigator.vibrate(300)}catch(e){}render()}},1000);render()}
-function togT(){if(S.tr){clearInterval(S.tiv);S.tr=false}else if(S.ts>0){S.tr=true;S.tiv=setInterval(()=>{if(S.ts>0){S.ts--;render()}else{clearInterval(S.tiv);S.tr=false;try{navigator.vibrate(300)}catch(e){}render()}},1000)}render()}
+// Timer
+function tStart(s){clearInterval(TV);TS=s;TI=s;TR=true;TV=setInterval(()=>{if(TS>0){TS--;ren()}else{clearInterval(TV);TR=false;try{navigator.vibrate(300)}catch(e){}ren()}},1000);ren()}
+function tTog(){if(TR){clearInterval(TV);TR=false}else if(TS>0){TR=true;TV=setInterval(()=>{if(TS>0){TS--;ren()}else{clearInterval(TV);TR=false;try{navigator.vibrate(300)}catch(e){}ren()}},1000)}ren()}
 
-function getLS(id){for(let i=db.workouts.length-1;i>=0;i--){const e=db.workouts[i].exercises.find(x=>x.id===id);if(e)return e.sets}return null}
-function getCD(id){return db.workouts.filter(w=>w.exercises.some(e=>e.id===id)).map(w=>{const e=w.exercises.find(x=>x.id===id);return{date:fmtDate(w.date),weight:Math.max(...e.sets.map(s=>s.weight)),volume:e.sets.reduce((a,s)=>a+s.weight*s.reps,0)}}).slice(-20)}
+function gLS(id){for(let i=db.w.length-1;i>=0;i--){const e=db.w[i].ex.find(x=>x.id===id);if(e)return e.sets}return null}
+function gCD(id){return db.w.filter(w=>w.ex.some(e=>e.id===id)).map(w=>{const e=w.ex.find(x=>x.id===id);return{d:fd(w.date),wt:Math.max(...e.sets.map(s=>s.w)),vol:e.sets.reduce((a,s)=>a+s.w*s.r,0)}}).slice(-20)}
 
-function h(t,a,...c){const el=document.createElement(t);if(a)Object.entries(a).forEach(([k,v])=>{if(k==="style"&&typeof v==="object")Object.assign(el.style,v);else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);else if(k==="class")el.className=v;else el.setAttribute(k,v)});c.flat(9).forEach(x=>{if(x==null)return;el.appendChild(typeof x==="string"?document.createTextNode(x):x)});return el}
+function h(t,a,...c){const el=document.createElement(t);if(a)Object.entries(a).forEach(([k,v])=>{if(k==="style"&&typeof v==="object")Object.assign(el.style,v);else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);else if(k==="cls")el.className=v;else el.setAttribute(k,v)});c.flat(9).forEach(x=>{if(x==null)return;el.appendChild(typeof x==="string"?document.createTextNode(x):x)});return el}
 
-function render(){
+function ren(){
 const app=document.getElementById("app");app.innerHTML="";
-const day=DAYS[S.di],ac=day.color;
-document.documentElement.style.setProperty("--accent",ac);
-if(S.showT){app.appendChild(renderTimer());return}
-app.appendChild(renderHeader(day,ac));
-if(S.view==="active")app.appendChild(renderActive(day,ac));
-else if(S.view==="workout")app.appendChild(renderSelect(day,ac));
-else if(S.view==="history")app.appendChild(renderHistory());
-else if(S.view==="stats")app.appendChild(renderStats(ac));
-if(S.view!=="active")app.appendChild(renderNav());
+if(ST){app.appendChild(rTimer());return}
+if(V==="active")app.appendChild(rActive());
+else if(V==="home")app.appendChild(rHome());
+else if(V==="history")app.appendChild(rHist());
+else if(V==="stats")app.appendChild(rStats());
+if(V!=="active")app.appendChild(rNav());
 }
 
-function renderHeader(day,ac){
-const wk=Math.floor(db.workouts.length/6)+1;
-return h("div",{style:{padding:"20px 20px 0",display:"flex",justifyContent:"space-between",alignItems:"center"}},
-h("div",{},h("div",{style:{fontSize:"11px",color:"#555",letterSpacing:"3px",textTransform:"uppercase",marginBottom:"4px"}},"PPL x2"),
-h("div",{style:{fontSize:"22px",fontWeight:"800",letterSpacing:"-1px",color:S.view==="active"?ac:"#e8e8f0"}},S.view==="active"?S.cw.dayLabel:"Semaine "+wk)),
-h("div",{style:{fontSize:"12px",color:"#555",textAlign:"right"}},h("div",{},db.workouts.length+" seances"),h("div",{style:{color:ac,fontWeight:"700"}},"82kg")))
-}
-
-function renderTimer(){
-const s=S.ts,pct=S.ti>0?(s/S.ti)*100:0,r=54,circ=2*Math.PI*r,off=circ-(pct/100)*circ,done=s===0;
-const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("width","180");svg.setAttribute("height","180");svg.style.transform="rotate(-90deg)";
-const c1=document.createElementNS("http://www.w3.org/2000/svg","circle");[["cx",90],["cy",90],["r",r],["fill","none"],["stroke","#1a1a2e"],["stroke-width",10]].forEach(([k,v])=>c1.setAttribute(k,v));
-const c2=document.createElementNS("http://www.w3.org/2000/svg","circle");[["cx",90],["cy",90],["r",r],["fill","none"],["stroke",done?"#50e88e":"#ff6b4a"],["stroke-width",10],["stroke-linecap","round"],["stroke-dasharray",circ],["stroke-dashoffset",off]].forEach(([k,v])=>c2.setAttribute(k,v));c2.style.transition="stroke-dashoffset 1s linear";
+// ── TIMER ──
+function rTimer(){
+const s=TS,pct=TI>0?(s/TI)*100:0,done=s===0;
+const r=60,circ=2*Math.PI*r,off=circ-(pct/100)*circ;
+const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("width","200");svg.setAttribute("height","200");svg.style.transform="rotate(-90deg)";
+const c1=document.createElementNS("http://www.w3.org/2000/svg","circle");[["cx",100],["cy",100],["r",r],["fill","none"],["stroke","#222"],["stroke-width",6]].forEach(([k,v])=>c1.setAttribute(k,v));
+const c2=document.createElementNS("http://www.w3.org/2000/svg","circle");[["cx",100],["cy",100],["r",r],["fill","none"],["stroke",done?"var(--green)":"var(--accent)"],["stroke-width",6],["stroke-linecap","round"],["stroke-dasharray",circ],["stroke-dashoffset",off]].forEach(([k,v])=>c2.setAttribute(k,v));c2.style.transition="stroke-dashoffset 1s linear";
 svg.appendChild(c1);svg.appendChild(c2);
-const td=h("div",{style:{position:"absolute",inset:"0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"42px",fontWeight:"800",color:done?"#50e88e":"#fff",letterSpacing:"2px"}},Math.floor(s/60)+":"+String(s%60).padStart(2,"0"));
-const circle=h("div",{style:{position:"relative",width:"180px",height:"180px",marginBottom:"24px"}});circle.appendChild(svg);circle.appendChild(td);
-return h("div",{class:"timer-overlay"},circle,
-h("div",{style:{display:"flex",gap:"10px",marginBottom:"24px"}},...[60,90,120,180].map(p=>h("button",{style:{background:S.ti===p?"#ff6b4a":"#1a1a2e",color:"#fff",border:"1px solid #333",borderRadius:"10px",padding:"8px 16px",fontSize:"14px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{S.showT=true;startT(p)}},p+"s"))),
-h("div",{style:{display:"flex",gap:"12px"}},h("button",{style:{background:S.tr?"#333":"#ff6b4a",color:"#fff",border:"none",borderRadius:"12px",padding:"12px 28px",fontSize:"16px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:togT},S.tr?"\u23F8 Pause":"\u25B6 Go"),
-h("button",{style:{background:"#1a1a2e",color:"#888",border:"1px solid #333",borderRadius:"12px",padding:"12px 28px",fontSize:"16px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{clearInterval(S.tiv);S.showT=false;render()}},"Fermer")))
+const time=h("div",{style:{position:"absolute",inset:"0",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"48px",fontWeight:"700",color:done?"var(--green)":"#fff",fontFamily:"'DM Sans',sans-serif"}},Math.floor(s/60)+":"+String(s%60).padStart(2,"0"));
+const wrap=h("div",{style:{position:"relative",width:"200px",height:"200px",marginBottom:"32px"}});wrap.appendChild(svg);wrap.appendChild(time);
+
+return h("div",{cls:"timer-bg"},wrap,
+h("div",{style:{display:"flex",gap:"8px",marginBottom:"28px"}},...[60,90,120,180].map(p=>h("button",{style:{background:TI===p?"var(--accent)":"#222",color:"#fff",border:"none",borderRadius:"20px",padding:"10px 18px",fontSize:"15px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{ST=true;tStart(p)}},p+"s"))),
+h("div",{style:{display:"flex",gap:"12px"}},
+h("button",{style:{background:TR?"#333":"var(--accent)",color:"#fff",border:"none",borderRadius:"14px",padding:"14px 32px",fontSize:"16px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:tTog},TR?"Pause":"Go"),
+h("button",{style:{background:"#222",color:"#888",border:"none",borderRadius:"14px",padding:"14px 32px",fontSize:"16px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{clearInterval(TV);ST=false;ren()}},"Fermer")))
 }
 
-function renderActive(day,ac){
-const w=S.cw;if(!w)return h("div",{});
-const ct=h("div",{style:{padding:"20px"}});
-ct.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"16px"}},
-h("button",{class:"btn",style:{background:ac,color:"#000",padding:"10px 20px",fontSize:"14px",flex:"1",marginRight:"8px"},onClick:()=>{S.showT=true;startT(S.ti)}},"\u23F1 Timer"),
-h("button",{class:"btn",style:{background:"#50e88e",color:"#000",padding:"10px 20px",fontSize:"14px"},onClick:finishW},"\u2713 Terminer")));
-if(day.activation)ct.appendChild(h("div",{class:"activation"},"\uD83D\uDD25 "+day.activation));
-if(day.note)ct.appendChild(h("div",{style:{background:"#111127",borderRadius:"10px",padding:"10px 14px",marginBottom:"12px",fontSize:"11px",color:"#888",lineHeight:"1.5",border:"1px solid #1a1a3e"}},day.note));
-if(day.asymmetry)ct.appendChild(h("div",{style:{background:"linear-gradient(135deg,#ff6b4a11,#ff6b4a08)",border:"1px solid #ff6b4a33",borderRadius:"10px",padding:"10px",marginBottom:"12px",fontSize:"11px",color:"#ff6b4a",lineHeight:"1.5"}},
-h("span",{style:{fontWeight:"800"}},"\u26A1 ASYMETRIE LAT GAUCHE")," \u2014 Rowing 1 bras : gauche en premier, meme charge G/D. Focus mental lat gauche sur les tirages."));
+// ── HOME ──
+function rHome(){
+const day=D[DI],ct=h("div",{style:{paddingTop:"20px"}});
 
-w.exercises.forEach((ex,ei)=>{
-const last=getLS(ex.id),pr=db.prs[ex.id],tk=ex.id,isA=ex.asymmetry,isP=ex.priority;
-const card=h("div",{class:"card",style:{background:isA?"#111120":isP?"#17111a":"#111127",borderRadius:"14px",padding:"14px",marginBottom:"10px",border:isA?"1px solid #ff6b4a33":isP?"1px solid "+ac+"33":"1px solid #1a1a3e",animationDelay:ei*40+"ms"}});
-const tr=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"4px"}});
-const nm=h("div",{style:{fontWeight:"700",fontSize:"13px",flex:"1"}},ex.name);
-if(pr)nm.appendChild(h("span",{style:{color:"#555",fontSize:"10px",marginLeft:"6px"}},"PR:"+pr.weight+"kg"));
-if(isP)nm.appendChild(h("span",{style:{background:ac+"33",color:ac,fontSize:"8px",padding:"1px 5px",borderRadius:"3px",marginLeft:"4px",fontWeight:"800"}},"PRIO"));
-tr.appendChild(nm);
-tr.appendChild(h("button",{style:{background:S.tips[tk]?"#1a1a3e":"none",border:"1px solid #222",borderRadius:"8px",color:S.tips[tk]?ac:"#444",padding:"3px 7px",fontSize:"10px",cursor:"pointer",fontFamily:"inherit",fontWeight:"700"},onClick:()=>{S.tips[tk]=!S.tips[tk];render()}},S.tips[tk]?"\u2715":"?"));
-card.appendChild(tr);
-card.appendChild(h("div",{style:{fontSize:"10px",color:"#444",marginBottom:"6px"}},ex.sets+"\u00D7"+ex.reps+" \u00B7 repos "+ex.rest));
-if(ex.note)card.appendChild(h("div",{style:{fontSize:"10px",color:"#ffd700",marginBottom:"6px",background:"#1a1a0a",borderRadius:"6px",padding:"4px 8px",border:"1px solid #333300"}},"\u{1F4CC} "+ex.note));
-if(S.tips[tk]){
-const pn=h("div",{style:{background:"#0a0a1a",borderRadius:"8px",padding:"10px",marginBottom:"10px",border:"1px solid #1a1a3e"}});
-pn.appendChild(h("div",{style:{fontSize:"11px",color:"#bbb",lineHeight:"1.6",marginBottom:"8px"}},ex.tips));
-if(ex.cues){const cd=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"3px"}});ex.cues.forEach(c=>cd.appendChild(h("span",{style:{background:ac+"22",color:ac,borderRadius:"6px",padding:"3px 8px",fontSize:"10px",fontWeight:"700",display:"inline-block",margin:"2px"}},c)));pn.appendChild(cd)}
-card.appendChild(pn)}
-const hdr=h("div",{style:{display:"grid",gridTemplateColumns:"28px 1fr 1fr 32px",gap:"5px",marginBottom:"4px"}});
-["#","Kg","Reps",""].forEach(t=>hdr.appendChild(h("div",{style:{fontSize:"9px",color:"#333",textAlign:"center"}},t)));card.appendChild(hdr);
+// Header
+ct.appendChild(h("div",{style:{marginBottom:"24px"}},
+h("div",{style:{fontSize:"13px",color:"var(--sub)",fontWeight:"500",marginBottom:"4px"}},"Semaine "+((Math.floor(db.w.length/6)||0)+1)+" \u00B7 "+db.w.length+" seances"),
+h("div",{style:{fontSize:"28px",fontWeight:"700",letterSpacing:"-0.5px"}},"Ton programme")));
+
+// Day pills
+const pills=h("div",{style:{display:"flex",gap:"6px",marginBottom:"24px",overflowX:"auto",paddingBottom:"4px"}});
+D.forEach((d,i)=>{
+const active=DI===i;
+pills.appendChild(h("button",{style:{padding:"8px 14px",borderRadius:"20px",border:"none",fontWeight:"600",fontSize:"13px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",background:active?"var(--accent)":"var(--card)",color:active?"#fff":"var(--sub)",transition:"all .2s"},onClick:()=>{DI=i;ren()}},d.day))});
+ct.appendChild(pills);
+
+// Day title
+ct.appendChild(h("div",{style:{marginBottom:"20px"}},
+h("div",{style:{fontSize:"22px",fontWeight:"700",marginBottom:"2px"}},day.label),
+h("div",{style:{fontSize:"13px",color:"var(--sub)"}},day.focus+" \u00B7 RPE "+day.rpe)));
+
+if(day.note)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--yellow)",background:"#1a1700",borderRadius:"10px",padding:"10px 12px",marginBottom:"16px"}},day.note));
+if(day.asym)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--accent)",background:"var(--accent2)",borderRadius:"10px",padding:"10px 12px",marginBottom:"16px"}},"Asymetrie lat gauche — Rowing 1 bras : gauche en premier, meme charge G/D"));
+
+// Exercises
+day.exercises.forEach((ex,i)=>{
+const pr=db.pr[ex.id],tk="h_"+ex.id,open=TIP[tk];
+const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:"8px",animationDelay:i*40+"ms",cursor:"pointer",borderLeft:ex.prio?"3px solid var(--accent)":ex.asym?"3px solid var(--yellow)":"3px solid transparent"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
+const row1=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"baseline"}});
+row1.appendChild(h("div",{style:{fontSize:"14px",fontWeight:"600"}},ex.name));
+const meta=h("div",{style:{fontSize:"12px",color:"var(--sub)",whiteSpace:"nowrap",marginLeft:"8px"}},ex.s+"\u00D7"+ex.r);
+if(pr)meta.appendChild(h("span",{style:{color:"var(--accent)",marginLeft:"6px",fontWeight:"700"}},pr.wt+"kg"));
+row1.appendChild(meta);
+card.appendChild(row1);
+
+if(ex.dw)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--dim)",marginTop:"4px"}},ex.dw+"kg \u00B7 repos "+Math.floor(ex.rest/60)+"min"+(ex.rest%60?""+ex.rest%60+"s":"")));
+if(ex.note)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--yellow)",marginTop:"4px"}},ex.note));
+
+if(open){
+card.appendChild(h("div",{style:{fontSize:"12px",color:"#bbb",marginTop:"10px",lineHeight:"1.6",padding:"10px 0",borderTop:"1px solid var(--border)"}},ex.how));
+}
+ct.appendChild(card)});
+
+// Start button
+ct.appendChild(h("button",{style:{width:"100%",padding:"16px",borderRadius:"14px",border:"none",background:"var(--accent)",color:"#fff",fontSize:"16px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit",marginTop:"16px"},onClick:startW},"Commencer"));
+return ct}
+
+// ── ACTIVE ──
+function rActive(){
+const w=CW;if(!w)return h("div",{});
+const day=D.find(d=>d.id===w.dayId);
+const ct=h("div",{style:{paddingTop:"16px"}});
+
+// Top bar
+const top=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}});
+top.appendChild(h("div",{},
+h("div",{style:{fontSize:"20px",fontWeight:"700"}},w.dayLabel),
+h("div",{style:{fontSize:"12px",color:"var(--sub)"}},day?day.focus:"")));
+top.appendChild(h("div",{style:{display:"flex",gap:"8px"}},
+h("button",{style:{background:"var(--card)",border:"none",borderRadius:"10px",padding:"8px 14px",fontSize:"13px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit",color:"var(--accent)"},onClick:()=>{ST=true;tStart(TI)}},"\u23F1"),
+h("button",{style:{background:"var(--green)",border:"none",borderRadius:"10px",padding:"8px 14px",fontSize:"13px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit",color:"#111"},onClick:finishW},"Terminer")));
+ct.appendChild(top);
+
+if(day&&day.asym)ct.appendChild(h("div",{style:{fontSize:"11px",color:"var(--accent)",background:"var(--accent2)",borderRadius:"8px",padding:"8px 10px",marginBottom:"12px"}},"Lat gauche — commence par la gauche, meme charge G/D"));
+
+w.ex.forEach((ex,ei)=>{
+const pr=db.pr[ex.id],tk=ex.id,open=TIP[tk];
+const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",marginBottom:"10px",overflow:"hidden",animationDelay:ei*30+"ms",borderLeft:ex.asym?"3px solid var(--yellow)":ex.prio?"3px solid var(--accent)":"3px solid transparent"}});
+
+// Header
+const hdr=h("div",{style:{padding:"12px 14px 0",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
+const nm=h("div",{},
+h("div",{style:{fontSize:"14px",fontWeight:"600"}},ex.name),
+h("div",{style:{fontSize:"11px",color:"var(--dim)",marginTop:"2px"}},ex.s+"\u00D7"+ex.r+(pr?" \u00B7 PR "+pr.wt+"kg":"")));
+hdr.appendChild(nm);
+hdr.appendChild(h("div",{style:{fontSize:"11px",color:open?"var(--accent)":"var(--dim)",fontWeight:"600"}},open?"\u2715":"Form"));
+card.appendChild(hdr);
+
+// Note
+if(ex.note)card.appendChild(h("div",{style:{padding:"4px 14px 0",fontSize:"11px",color:"var(--yellow)"}},ex.note));
+
+// How to (expanded)
+if(open)card.appendChild(h("div",{style:{padding:"8px 14px",fontSize:"12px",color:"#bbb",lineHeight:"1.6",borderTop:"1px solid var(--border)",marginTop:"8px"}},ex.how));
+
+// Sets
+const grid=h("div",{style:{padding:"10px 14px 14px"}});
+const ghdr=h("div",{style:{display:"grid",gridTemplateColumns:"24px 1fr 1fr 28px",gap:"6px",marginBottom:"4px"}});
+["","KG","REPS",""].forEach(t=>ghdr.appendChild(h("div",{style:{fontSize:"9px",color:"var(--dim)",textAlign:"center",fontWeight:"600",letterSpacing:"1px"}},t)));
+grid.appendChild(ghdr);
+
 ex.sd.forEach((set,si)=>{
-const row=h("div",{style:{display:"grid",gridTemplateColumns:"28px 1fr 1fr 32px",gap:"5px",marginBottom:"3px",alignItems:"center"}});
-row.appendChild(h("div",{style:{fontSize:"11px",color:"#333",textAlign:"center",fontWeight:"700"}},""+(si+1)));
-const wI=h("input",{type:"number",inputMode:"decimal",placeholder:last&&last[si]?last[si].weight:"",value:set.weight||"",class:"input-set"});
-wI.addEventListener("input",e=>{w.exercises[ei].sd[si].weight=e.target.value});wI.addEventListener("focus",()=>wI.style.borderColor=ac);wI.addEventListener("blur",()=>wI.style.borderColor="#222");
-const rI=h("input",{type:"number",inputMode:"numeric",placeholder:last&&last[si]?last[si].reps:"",value:set.reps||"",class:"input-set"});
-rI.addEventListener("input",e=>{w.exercises[ei].sd[si].reps=e.target.value});rI.addEventListener("focus",()=>rI.style.borderColor=ac);rI.addEventListener("blur",()=>rI.style.borderColor="#222");
-const del=h("button",{style:{background:"none",border:"none",color:"#222",cursor:"pointer",fontSize:"14px",padding:"2px"},onClick:()=>{if(ex.sd.length>1){ex.sd.splice(si,1);render()}}},"\u00D7");
-row.appendChild(wI);row.appendChild(rI);row.appendChild(del);card.appendChild(row)});
-card.appendChild(h("button",{style:{background:"none",border:"1px dashed #1a1a3e",borderRadius:"6px",color:"#333",padding:"4px",width:"100%",marginTop:"4px",fontSize:"11px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{ex.sd.push({weight:"",reps:""});render()}},"+"));
-ct.appendChild(card)});
-ct.appendChild(h("button",{style:{background:"none",border:"1px solid #222",borderRadius:"10px",color:"#444",padding:"10px",width:"100%",marginTop:"8px",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{S.cw=null;S.view="workout";render()}},"Annuler"));
+const row=h("div",{style:{display:"grid",gridTemplateColumns:"24px 1fr 1fr 28px",gap:"6px",marginBottom:"4px",alignItems:"center"}});
+row.appendChild(h("div",{style:{fontSize:"12px",color:"var(--dim)",textAlign:"center",fontWeight:"600"}},(si+1)+""));
+
+const wI=h("input",{type:"number",inputMode:"decimal",value:set.w||"",placeholder:"",style:{background:"var(--bg)",border:"1px solid var(--border)",borderRadius:"8px",color:"#fff",padding:"8px",fontSize:"15px",textAlign:"center",fontFamily:"inherit",fontWeight:"600",outline:"none",width:"100%"}});
+wI.addEventListener("input",e=>{CW.ex[ei].sd[si].w=e.target.value});
+wI.addEventListener("focus",()=>wI.style.borderColor="var(--accent)");
+wI.addEventListener("blur",()=>wI.style.borderColor="var(--border)");
+
+const rI=h("input",{type:"number",inputMode:"numeric",value:set.r||"",placeholder:"",style:{background:"var(--bg)",border:"1px solid var(--border)",borderRadius:"8px",color:"#fff",padding:"8px",fontSize:"15px",textAlign:"center",fontFamily:"inherit",fontWeight:"600",outline:"none",width:"100%"}});
+rI.addEventListener("input",e=>{CW.ex[ei].sd[si].r=e.target.value});
+rI.addEventListener("focus",()=>rI.style.borderColor="var(--accent)");
+rI.addEventListener("blur",()=>rI.style.borderColor="var(--border)");
+
+const del=h("button",{style:{background:"none",border:"none",color:"var(--border)",cursor:"pointer",fontSize:"16px",padding:"0"},onClick:()=>{if(ex.sd.length>1){ex.sd.splice(si,1);ren()}}},"\u00D7");
+row.appendChild(wI);row.appendChild(rI);row.appendChild(del);grid.appendChild(row)});
+
+grid.appendChild(h("button",{style:{background:"none",border:"1px dashed var(--border)",borderRadius:"8px",color:"var(--dim)",padding:"6px",width:"100%",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{ex.sd.push({w:"",r:""});ren()}},"+"));
+card.appendChild(grid);ct.appendChild(card)});
+
+// Cancel
+ct.appendChild(h("button",{style:{background:"none",border:"1px solid var(--border)",borderRadius:"10px",color:"var(--dim)",padding:"10px",width:"100%",marginTop:"4px",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{CW=null;V="home";ren()}},"Annuler la seance"));
 return ct}
 
-function startW(){const day=DAYS[S.di];S.cw={dayId:day.id,dayLabel:day.label,date:todayStr(),exercises:day.exercises.map(ex=>{const last=getLS(ex.id);return{...ex,sd:Array.from({length:ex.sets},(_,i)=>{const w=last&&last[i]?String(last[i].weight):ex.dw!=null?String(ex.dw):"";const r=last&&last[i]?String(last[i].reps):"";return{weight:w,reps:r}})}}),startTime:Date.now()};S.view="active";render()}
-function finishW(){const w=S.cw;if(!w)return;
-const cl={dayId:w.dayId,dayLabel:w.dayLabel,date:w.date,duration:Math.round((Date.now()-w.startTime)/60000),
-exercises:w.exercises.map(ex=>({id:ex.id,name:ex.name,sets:ex.sd.filter(s=>s.weight&&s.reps).map(s=>({weight:parseFloat(s.weight),reps:parseInt(s.reps)}))})).filter(ex=>ex.sets.length>0)};
-cl.exercises.forEach(ex=>{const mW=Math.max(...ex.sets.map(s=>s.weight)),mV=Math.max(...ex.sets.map(s=>s.weight*s.reps));
-if(!db.prs[ex.id]||mW>(db.prs[ex.id].weight||0))db.prs[ex.id]={...(db.prs[ex.id]||{}),weight:mW,weightDate:cl.date};
-if(!db.prs[ex.id]||mV>(db.prs[ex.id].volume||0))db.prs[ex.id]={...(db.prs[ex.id]||{}),volume:mV,volumeDate:cl.date}});
-db.workouts.push(cl);saveDB();S.cw=null;S.view="workout";render()}
+function startW(){
+const day=D[DI];
+CW={dayId:day.id,dayLabel:day.label,date:td(),ex:day.exercises.map(ex=>{
+const last=gLS(ex.id);
+return{...ex,sd:Array.from({length:ex.s},(_,i)=>{
+const w=last&&last[i]?String(last[i].w):ex.dw?String(ex.dw):"";
+const r=last&&last[i]?String(last[i].r):"";return{w,r}})}
+}),t0:Date.now()};V="active";ren()}
 
-function renderSelect(day,ac){
-const ct=h("div",{style:{padding:"20px"}});
-const dr=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:"5px",marginBottom:"20px"}});
-DAYS.forEach((d,i)=>{dr.appendChild(h("button",{style:{padding:"8px 2px",borderRadius:"10px",border:"none",fontWeight:"700",fontSize:"10px",cursor:"pointer",fontFamily:"inherit",textAlign:"center",lineHeight:"1.2",background:S.di===i?d.color:"#111127",color:S.di===i?"#000":"#555",boxShadow:S.di===i?"0 3px 15px "+d.color+"33":"none"},onClick:()=>{S.di=i;render()}},d.label))});
-ct.appendChild(dr);
-ct.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px"}},
-h("div",{},h("div",{style:{fontSize:"15px",fontWeight:"800",color:ac}},day.day+" \u2014 "+day.label),h("div",{style:{fontSize:"11px",color:"#555",marginTop:"2px"}},day.focus)),
-h("span",{style:{background:ac+"22",color:ac,fontSize:"9px",padding:"2px 6px",borderRadius:"4px",fontWeight:"800"}},"RPE "+day.rpe)));
-if(day.asymmetry)ct.appendChild(h("div",{style:{background:"linear-gradient(135deg,#ff6b4a11,#ff6b4a08)",border:"1px solid #ff6b4a33",borderRadius:"10px",padding:"10px",marginBottom:"12px",fontSize:"10px",color:"#ff6b4a",lineHeight:"1.4"}},"\u26A1 Correction asymetrie lat gauche \u2014 Rowing 1 bras : gauche en premier, meme charge G/D"));
-day.exercises.forEach((ex,i)=>{const pr=db.prs[ex.id],tk="p_"+ex.id;
-const card=h("div",{class:"card",style:{padding:"10px 12px",background:ex.asymmetry?"#1a0a0a":ex.priority?"#14101a":"#111127",borderRadius:"10px",marginBottom:"5px",border:ex.asymmetry?"1px solid #ff6b4a22":ex.priority?"1px solid "+ac+"22":"1px solid #1a1a3e",animationDelay:i*35+"ms",cursor:"pointer"},onClick:()=>{S.tips[tk]=!S.tips[tk];render()}});
-const top=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}});
-top.appendChild(h("div",{style:{fontSize:"12px",flex:"1"}},ex.name,h("span",{style:{color:"#333",marginLeft:"6px",fontSize:"10px"}},ex.sets+"\u00D7"+ex.reps)));
-if(pr&&pr.weight){const ps=h("span",{style:{color:ac,fontWeight:"700",fontSize:"11px"}},pr.weight+"kg");ps.appendChild(h("span",{class:"pr-badge"},"PR"));top.appendChild(ps)}
-card.appendChild(top);
-if(S.tips[tk]){const det=h("div",{style:{marginTop:"6px"}});det.appendChild(h("div",{style:{fontSize:"10px",color:"#777",lineHeight:"1.5",marginBottom:"5px"}},ex.tips));
-if(ex.cues){const cd=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"3px"}});ex.cues.forEach(c=>cd.appendChild(h("span",{style:{background:ac+"22",color:ac,borderRadius:"4px",padding:"2px 5px",fontSize:"8px",fontWeight:"700",display:"inline-block"}},c)));det.appendChild(cd)}
-det.appendChild(h("div",{style:{fontSize:"9px",color:"#444",marginTop:"3px"}},"Repos : "+ex.rest));
-if(ex.dw!=null)det.appendChild(h("div",{style:{fontSize:"9px",color:"#666",marginTop:"2px"}},"\uD83C\uDFCB "+ex.dw+"kg"));
-if(ex.note)det.appendChild(h("div",{style:{fontSize:"9px",color:"#ffd700",marginTop:"2px"}},"\u{1F4CC} "+ex.note));
-card.appendChild(det)}
-ct.appendChild(card)});
-ct.appendChild(h("button",{class:"btn",style:{width:"100%",padding:"14px",borderRadius:"12px",marginTop:"14px",background:"linear-gradient(135deg,"+ac+","+ac+"cc)",color:"#000",fontSize:"15px",letterSpacing:".5px",boxShadow:"0 6px 30px "+ac+"44"},onClick:startW},"Commencer \u2014 "+day.label));
-return ct}
+function finishW(){
+if(!CW)return;
+const cl={dayId:CW.dayId,dayLabel:CW.dayLabel,date:CW.date,dur:Math.round((Date.now()-CW.t0)/60000),
+ex:CW.ex.map(ex=>({id:ex.id,name:ex.name,sets:ex.sd.filter(s=>s.w&&s.r).map(s=>({w:parseFloat(s.w),r:parseInt(s.r)}))})).filter(ex=>ex.sets.length>0)};
+cl.ex.forEach(ex=>{
+const mW=Math.max(...ex.sets.map(s=>s.w)),mV=Math.max(...ex.sets.map(s=>s.w*s.r));
+if(!db.pr[ex.id]||mW>(db.pr[ex.id].wt||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),wt:mW};
+if(!db.pr[ex.id]||mV>(db.pr[ex.id].vol||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),vol:mV}});
+db.w.push(cl);save();CW=null;V="home";ren()}
 
-function renderHistory(){
-const ct=h("div",{style:{padding:"20px"}});ct.appendChild(h("div",{style:{fontSize:"18px",fontWeight:"800",marginBottom:"16px"}},"Historique"));
-if(!db.workouts.length){ct.appendChild(h("div",{style:{color:"#444",textAlign:"center",padding:"40px"}},"Aucune seance"));return ct}
-[...db.workouts].reverse().forEach((w,i)=>{const dd=DAYS.find(d=>d.id===w.dayId),col=dd?dd.color:"#555";
-const card=h("div",{class:"card",style:{background:"#111127",borderRadius:"12px",padding:"14px",marginBottom:"8px",border:"1px solid #1a1a3e",animationDelay:i*25+"ms"}});
-card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"6px"}},
-h("div",{},h("span",{style:{color:col,fontWeight:"800",fontSize:"14px"}},w.dayLabel),h("span",{style:{color:"#444",marginLeft:"8px",fontSize:"11px"}},fmtDate(w.date))),
-h("span",{style:{color:"#444",fontSize:"11px"}},w.duration+"min")));
-const tags=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"3px"}});
-w.exercises.forEach(ex=>tags.appendChild(h("span",{style:{background:"#0a0a1a",borderRadius:"5px",padding:"2px 6px",fontSize:"10px",color:"#555"}},ex.name.slice(0,18)+" \u00B7 "+Math.max(...ex.sets.map(s=>s.weight))+"kg")));
+// ── HISTORY ──
+function rHist(){
+const ct=h("div",{style:{paddingTop:"20px"}});
+ct.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",marginBottom:"20px"}},"Historique"));
+if(!db.w.length)return ct.appendChild(h("div",{style:{color:"var(--dim)",textAlign:"center",padding:"60px 0",fontSize:"14px"}},"Aucune seance")),ct;
+[...db.w].reverse().forEach((w,i)=>{
+const dd=D.find(d=>d.id===w.dayId);
+const card=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:"8px",animationDelay:i*25+"ms"}});
+card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:"8px"}},
+h("div",{style:{fontWeight:"600",fontSize:"15px"}},w.dayLabel),
+h("div",{style:{color:"var(--sub)",fontSize:"12px"}},fd(w.date)+" \u00B7 "+w.dur+"min")));
+const tags=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"4px"}});
+w.ex.forEach(ex=>{const mx=Math.max(...ex.sets.map(s=>s.w));tags.appendChild(h("span",{style:{background:"var(--bg)",borderRadius:"6px",padding:"3px 8px",fontSize:"11px",color:"var(--sub)"}},ex.name.slice(0,16)+" "+mx+"kg"))});
 card.appendChild(tags);ct.appendChild(card)});return ct}
 
-function renderStats(ac){
-const ct=h("div",{style:{padding:"20px"}});ct.appendChild(h("div",{style:{fontSize:"18px",fontWeight:"800",marginBottom:"8px"}},"Progression"));
-const pb=h("div",{style:{background:"linear-gradient(135deg,#1a1a3e,#111127)",borderRadius:"14px",padding:"14px",marginBottom:"20px",border:"1px solid #252550"}});
-pb.appendChild(h("div",{style:{fontSize:"10px",color:"#555",letterSpacing:"2px",textTransform:"uppercase",marginBottom:"10px"}},"Records personnels"));
-const grid=h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px"}});
-const allE=DAYS.flatMap(d=>d.exercises);
-Object.entries(db.prs).forEach(([id,pr])=>{const exo=allE.find(e=>e.id===id);if(!exo)return;
-grid.appendChild(h("div",{style:{background:"#0a0a1a",borderRadius:"8px",padding:"8px 10px"}},
-h("div",{style:{fontSize:"10px",color:"#555",marginBottom:"3px"}},exo.name.slice(0,22)),
-h("div",{style:{fontSize:"16px",fontWeight:"800",color:"#ff6b4a"}},pr.weight+"kg"),
-h("div",{style:{fontSize:"9px",color:"#333"}},"Vol: "+pr.volume+"kg")))});
-pb.appendChild(grid);ct.appendChild(pb);
-ct.appendChild(h("div",{style:{fontSize:"10px",color:"#555",letterSpacing:"2px",textTransform:"uppercase",marginBottom:"8px"}},"Graphiques"));
-const btns=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"4px",marginBottom:"14px"}});
-allE.forEach(ex=>{if(!getCD(ex.id).length)return;
-btns.appendChild(h("button",{style:{background:S.selEx===ex.id?"#ff6b4a":"#111127",color:S.selEx===ex.id?"#000":"#555",border:"1px solid #1a1a3e",borderRadius:"6px",padding:"4px 8px",fontSize:"9px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{S.selEx=S.selEx===ex.id?null:ex.id;render()}},ex.name.slice(0,16)))});
+// ── STATS ──
+function rStats(){
+const ct=h("div",{style:{paddingTop:"20px"}});
+ct.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",marginBottom:"20px"}},"Stats"));
+
+// PRs
+const allE=D.flatMap(d=>d.exercises);
+const prEntries=Object.entries(db.pr);
+if(prEntries.length){
+ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)",fontWeight:"600",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"10px"}},"Records personnels"));
+const grid=h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px",marginBottom:"24px"}});
+prEntries.forEach(([id,pr])=>{const exo=allE.find(e=>e.id===id);if(!exo)return;
+grid.appendChild(h("div",{style:{background:"var(--card)",borderRadius:"10px",padding:"10px 12px"}},
+h("div",{style:{fontSize:"11px",color:"var(--sub)",marginBottom:"4px"}},exo.name.slice(0,20)),
+h("div",{style:{fontSize:"20px",fontWeight:"700",color:"var(--accent)"}},pr.wt+"kg")))});
+ct.appendChild(grid)}
+
+// Chart selector
+ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)",fontWeight:"600",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"10px"}},"Progression"));
+const btns=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"4px",marginBottom:"16px"}});
+allE.forEach(ex=>{if(!gCD(ex.id).length)return;
+btns.appendChild(h("button",{style:{background:SE===ex.id?"var(--accent)":"var(--card)",color:SE===ex.id?"#fff":"var(--sub)",border:"none",borderRadius:"8px",padding:"6px 10px",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{SE=SE===ex.id?null:ex.id;ren()}},ex.name.slice(0,14)))});
 ct.appendChild(btns);
-if(S.selEx){const data=getCD(S.selEx),exo=allE.find(e=>e.id===S.selEx);
-const cc=h("div",{class:"card",style:{background:"#111127",borderRadius:"14px",padding:"14px",border:"1px solid #1a1a3e"}});
-cc.appendChild(h("div",{style:{fontSize:"12px",fontWeight:"700",marginBottom:"10px"}},(exo?exo.name:"")+" \u2014 Charge max"));
-if(data.length>0){const mxW=Math.max(...data.map(d=>d.weight)),mnW=Math.min(...data.map(d=>d.weight)),rng=mxW-mnW||1;
-const bars=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"2px",height:"100px",marginBottom:"6px"}});
-data.forEach(d=>{const p=((d.weight-mnW)/rng)*80+20;
+
+if(SE){
+const data=gCD(SE),exo=allE.find(e=>e.id===SE);
+if(data.length){
+const box=h("div",{cls:"fi",style:{background:"var(--card)",borderRadius:"14px",padding:"16px"}});
+box.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" — Charge"));
+const mx=Math.max(...data.map(d=>d.wt)),mn=Math.min(...data.map(d=>d.wt)),rng=mx-mn||1;
+const bars=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"3px",height:"100px"}});
+data.forEach(d=>{const p=((d.wt-mn)/rng)*75+25;
 bars.appendChild(h("div",{style:{flex:"1",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",height:"100%"}},
-h("div",{style:{fontSize:"7px",color:"#555",marginBottom:"1px"}},""+d.weight),
-h("div",{style:{width:"100%",height:p+"%",background:"linear-gradient(to top,#ff6b4a,#ff6b4a88)",borderRadius:"2px 2px 0 0",minHeight:"3px"}}),
-h("div",{style:{fontSize:"6px",color:"#333",marginTop:"2px",transform:"rotate(-45deg)",whiteSpace:"nowrap"}},d.date)))});
-cc.appendChild(bars);
-cc.appendChild(h("div",{style:{fontSize:"12px",fontWeight:"700",marginBottom:"10px",marginTop:"16px"}},(exo?exo.name:"")+" \u2014 Volume"));
-const mxV=Math.max(...data.map(d=>d.volume)),mnV=Math.min(...data.map(d=>d.volume)),rngV=mxV-mnV||1;
-const barsV=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"2px",height:"100px"}});
-data.forEach(d=>{const p=((d.volume-mnV)/rngV)*80+20;
-barsV.appendChild(h("div",{style:{flex:"1",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",height:"100%"}},
-h("div",{style:{fontSize:"7px",color:"#555",marginBottom:"1px"}},""+d.volume),
-h("div",{style:{width:"100%",height:p+"%",background:"linear-gradient(to top,#4aadff,#4aadff88)",borderRadius:"2px 2px 0 0",minHeight:"3px"}}),
-h("div",{style:{fontSize:"6px",color:"#333",marginTop:"2px",transform:"rotate(-45deg)",whiteSpace:"nowrap"}},d.date)))});
-cc.appendChild(barsV)}ct.appendChild(cc)}
-else if(db.workouts.length>0)ct.appendChild(h("div",{style:{color:"#444",textAlign:"center",padding:"16px",fontSize:"12px"}},"\u2191 Selectionne un exercice"));
+h("div",{style:{fontSize:"8px",color:"var(--sub)",marginBottom:"2px"}},d.wt+""),
+h("div",{style:{width:"100%",height:p+"%",background:"var(--accent)",borderRadius:"3px 3px 0 0",minHeight:"4px"}})))});
+box.appendChild(bars);ct.appendChild(box)}}
 return ct}
 
-function renderNav(){const nav=h("div",{class:"bottom-nav"});
-[{id:"workout",l:"Seance",i:"\uD83C\uDFCB\uFE0F"},{id:"history",l:"Historique",i:"\uD83D\uDCCB"},{id:"stats",l:"Stats",i:"\uD83D\uDCC8"}].forEach(tab=>{
-const btn=h("button",{class:"nav-btn",onClick:()=>{S.view=tab.id;render()}});
-btn.appendChild(h("span",{},tab.i));btn.appendChild(h("span",{class:"nav-label",style:{color:S.view===tab.id?"#ff6b4a":"#444"}},tab.l));nav.appendChild(btn)});return nav}
+// ── NAV ──
+function rNav(){
+const nav=h("div",{cls:"nav"});
+[{id:"home",l:"Seance",i:"\uD83C\uDFCB"},{id:"history",l:"Historique",i:"\uD83D\uDCCB"},{id:"stats",l:"Stats",i:"\uD83D\uDCC8"}].forEach(t=>{
+nav.appendChild(h("button",{onClick:()=>{V=t.id;ren()}},
+h("span",{},t.i),h("span",{style:{color:V===t.id?"var(--accent)":"var(--dim)"}},t.l)))});
+return nav}
 
-const dm={1:0,2:1,3:2,4:3,5:4,6:5,0:0};S.di=dm[new Date().getDay()]||0;
-loadDB();render();
+// Init
+const dm={1:0,2:1,3:2,4:3,5:4,6:5,0:0};DI=dm[new Date().getDay()]||0;
+load();ren();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
