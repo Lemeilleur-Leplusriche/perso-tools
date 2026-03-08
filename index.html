@@ -33,26 +33,26 @@ input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,in
 const DAYS=[
 {id:"push_heavy",label:"Push Lourd",day:"Lundi",focus:"Haut pecs + epaules + triceps",rpe:"8-9",color:"#ff6b4a",activation:"2x20 pompes lentes",
 exercises:[
-{id:"inc_db_h",name:"Dev incline halteres (30)",sets:4,reps:"6-8",rest:"2-3 min",tips:"PRIORITE #1. Lourd. Coudes a 45 du corps. Descente 3s au niveau des clavicules. Pousse en haut et legerement vers l'interieur.",cues:["Incline 30 PAS 45","Coudes 45","Descente 3s","Pousse interieur"],priority:true},
-{id:"inc_bar_h",name:"Dev incline barre (30)",sets:3,reps:"8-10",rest:"2 min",tips:"Charge progressive. Barre descend vers les clavicules.",cues:["Charge progressive","Barre vers clavicules"]},
-{id:"cable_fly_low",name:"Cable fly low-to-high",sets:3,reps:"12-15",rest:"60s",tips:"Cables en bas vers le haut. Cible haut des pecs. Squeeze en haut.",cues:["Cables en bas","Bas vers haut","Squeeze"]},
-{id:"flat_db",name:"Dev couche halteres (plat)",sets:3,reps:"8-10",rest:"2 min",tips:"Secondaire. Omoplates serrees, pieds ancres.",cues:["Omoplates serrees","Secondaire"]},
-{id:"ohp_db",name:"Dev militaire halteres",sets:4,reps:"8-10",rest:"2 min",tips:"Epaules 3D. Pousse verticale. Pas de cambrure.",cues:["Epaules 3D","Verticale","Pas de cambrure"]},
-{id:"lat_raise_h",name:"Elevations laterales",sets:4,reps:"12-15",rest:"60s",tips:"Leger, controle. Penche en avant. Parallele au sol max. Pas d'elan.",cues:["Leger","Controle","Pas d'elan"]},
-{id:"dips_h",name:"Dips lestes ou pushdown",sets:3,reps:"8-12",rest:"90s",tips:"Triceps compose. Dips penche en avant = pecs, droit = triceps.",cues:["Triceps compose"]},
-{id:"tri_ext_h",name:"Extension triceps poulie",sets:3,reps:"12-15",rest:"60s",tips:"Finition. Coudes fixes, extension complete, squeeze.",cues:["Coudes fixes","Squeeze"]}
+{id:"inc_db_h",name:"Dev incline halteres (30)",sets:4,reps:"6-8",rest:"2-3 min",dw:24,tips:"PRIORITE #1. Lourd. Coudes a 45 du corps. Descente 3s au niveau des clavicules. Pousse en haut et legerement vers l'interieur.",cues:["Incline 30 PAS 45","Coudes 45","Descente 3s","Pousse interieur"],priority:true},
+{id:"inc_bar_h",name:"Dev incline barre (30)",sets:3,reps:"8-10",rest:"2 min",dw:30,note:"Monter semaine pro",tips:"Charge progressive. Barre descend vers les clavicules.",cues:["Charge progressive","Barre vers clavicules"]},
+{id:"cable_fly_low",name:"Cable fly low-to-high",sets:3,reps:"12-15",rest:"60s",dw:9,tips:"Cables en bas vers le haut. Cible haut des pecs. Squeeze en haut.",cues:["Cables en bas","Bas vers haut","Squeeze"]},
+{id:"flat_db",name:"Dev couche halteres (plat)",sets:3,reps:"8-10",rest:"2 min",dw:24,tips:"Secondaire. Omoplates serrees, pieds ancres.",cues:["Omoplates serrees","Secondaire"]},
+{id:"ohp_db",name:"Dev militaire halteres",sets:4,reps:"8-10",rest:"2 min",dw:12,tips:"Epaules 3D. Pousse verticale. Pas de cambrure.",cues:["Epaules 3D","Verticale","Pas de cambrure"]},
+{id:"lat_raise_h",name:"Elevations laterales",sets:4,reps:"12-15",rest:"60s",dw:8,tips:"Leger, controle. Penche en avant. Parallele au sol max. Pas d'elan.",cues:["Leger","Controle","Pas d'elan"]},
+{id:"dips_h",name:"Dips lestes ou pushdown",sets:3,reps:"8-12",rest:"90s",dw:0,tips:"Triceps compose. Dips penche en avant = pecs, droit = triceps.",cues:["Triceps compose"]},
+{id:"tri_ext_h",name:"Extension triceps poulie",sets:3,reps:"12-15",rest:"60s",dw:24,tips:"Finition. Coudes fixes, extension complete, squeeze.",cues:["Coudes fixes","Squeeze"]}
 ]},
 {id:"pull_heavy",label:"Pull Lourd",day:"Mardi",focus:"Dos epaisseur/largeur + biceps",rpe:"8-9",color:"#4aadff",asymmetry:true,
 note:"Dos : pense COUDES, pas mains. Tes mains = des crochets. STRAPS obligatoires sur tous les tirages.",
 exercises:[
-{id:"pullups_h",name:"Tractions prise large (lestees)",sets:4,reps:"6-10",rest:"2-3 min",tips:"Roi du dos. STRAPS. Leste si >10 reps. Omoplates vers le bas d'abord. Focus mental cote gauche.",cues:["STRAPS","Omoplates d'abord","Focus lat gauche","Leste si >10"],priority:true},
-{id:"row_bar_h",name:"Rowing barre pronation",sets:4,reps:"6-8",rest:"2-3 min",tips:"Lourd. Buste 45, dos PLAT. Tire vers le nombril. Squeeze omoplates. Equilibre G/D.",cues:["Lourd","Dos plat 45","Nombril","STRAPS"]},
-{id:"db_row_h",name:"Rowing haltere 1 bras",sets:3,reps:"8-10",rest:"90s",tips:"Commence TOUJOURS par le cote GAUCHE. Meme charge des deux cotes. Coude vers la hanche. Squeeze omoplate 2s.",cues:["GAUCHE d'abord","Coude vers hanche","Squeeze 2s","Meme charge G/D"],asymmetry:true},
-{id:"pullover_h",name:"Pullover poulie haute",sets:3,reps:"12-15",rest:"60s",tips:"Isole le grand dorsal. Bras quasi tendus. Focus contraction lat gauche.",cues:["Grand dorsal","Bras tendus","Focus lat gauche"]},
-{id:"face_pull_h",name:"Face pulls",sets:4,reps:"15-20",rest:"60s",tips:"NON NEGOCIABLE. Poulie haute. Tire vers les oreilles, coudes hauts. Rotation externe.",cues:["NON NEGOCIABLE","Coudes hauts","Rotation externe"],priority:true},
-{id:"shrugs_h",name:"Shrugs halteres",sets:3,reps:"12-15",rest:"60s",tips:"Trapezes. Monte DROIT vers les oreilles. Hold 2s. PAS de rotation.",cues:["Droit vers oreilles","Hold 2s","Pas de rotation"]},
-{id:"ez_curl_h",name:"Curl barre EZ",sets:3,reps:"8-10",rest:"90s",tips:"Strict, pas de triche. Coudes fixes. Si le buste bouge = trop lourd.",cues:["Strict","Coudes fixes","Pas de triche"]},
-{id:"hammer_h",name:"Curl marteau",sets:3,reps:"12-15",rest:"60s",tips:"Brachio-radial. Prise neutre. Descente controlee.",cues:["Prise neutre","Descente controlee"]}
+{id:"pullups_h",name:"Tractions prise large (lestees)",sets:4,reps:"6-10",rest:"2-3 min",dw:0,tips:"Roi du dos. STRAPS. Leste si >10 reps. Omoplates vers le bas d'abord. Focus mental cote gauche.",cues:["STRAPS","Omoplates d'abord","Focus lat gauche","Leste si >10"],priority:true},
+{id:"row_bar_h",name:"Rowing barre pronation",sets:4,reps:"6-8",rest:"2-3 min",dw:45,tips:"Lourd. Buste 45, dos PLAT. Tire vers le nombril. Squeeze omoplates. Equilibre G/D.",cues:["Lourd","Dos plat 45","Nombril","STRAPS"]},
+{id:"db_row_h",name:"Rowing haltere 1 bras",sets:3,reps:"8-10",rest:"90s",dw:12,note:"Go 14 semaine pro",tips:"Commence TOUJOURS par le cote GAUCHE. Meme charge des deux cotes. Coude vers la hanche. Squeeze omoplate 2s.",cues:["GAUCHE d'abord","Coude vers hanche","Squeeze 2s","Meme charge G/D"],asymmetry:true},
+{id:"pullover_h",name:"Pullover poulie haute",sets:3,reps:"12-15",rest:"60s",dw:32,tips:"Isole le grand dorsal. Bras quasi tendus. Focus contraction lat gauche.",cues:["Grand dorsal","Bras tendus","Focus lat gauche"]},
+{id:"face_pull_h",name:"Face pulls",sets:4,reps:"15-20",rest:"60s",dw:24,tips:"NON NEGOCIABLE. Poulie haute. Tire vers les oreilles, coudes hauts. Rotation externe.",cues:["NON NEGOCIABLE","Coudes hauts","Rotation externe"],priority:true},
+{id:"shrugs_h",name:"Shrugs halteres",sets:3,reps:"12-15",rest:"60s",dw:24,tips:"Trapezes. Monte DROIT vers les oreilles. Hold 2s. PAS de rotation.",cues:["Droit vers oreilles","Hold 2s","Pas de rotation"]},
+{id:"ez_curl_h",name:"Curl barre EZ",sets:3,reps:"8-10",rest:"90s",dw:30,tips:"Strict, pas de triche. Coudes fixes. Si le buste bouge = trop lourd.",cues:["Strict","Coudes fixes","Pas de triche"]},
+{id:"hammer_h",name:"Curl marteau",sets:3,reps:"12-15",rest:"60s",dw:12,tips:"Brachio-radial. Prise neutre. Descente controlee.",cues:["Prise neutre","Descente controlee"]}
 ]},
 {id:"legs_quad",label:"Legs Quadri",day:"Mercredi",focus:"Quadriceps + ischios + mollets + abdos",rpe:"8-9",color:"#50e88e",
 exercises:[
@@ -172,6 +172,7 @@ tr.appendChild(nm);
 tr.appendChild(h("button",{style:{background:S.tips[tk]?"#1a1a3e":"none",border:"1px solid #222",borderRadius:"8px",color:S.tips[tk]?ac:"#444",padding:"3px 7px",fontSize:"10px",cursor:"pointer",fontFamily:"inherit",fontWeight:"700"},onClick:()=>{S.tips[tk]=!S.tips[tk];render()}},S.tips[tk]?"\u2715":"?"));
 card.appendChild(tr);
 card.appendChild(h("div",{style:{fontSize:"10px",color:"#444",marginBottom:"6px"}},ex.sets+"\u00D7"+ex.reps+" \u00B7 repos "+ex.rest));
+if(ex.note)card.appendChild(h("div",{style:{fontSize:"10px",color:"#ffd700",marginBottom:"6px",background:"#1a1a0a",borderRadius:"6px",padding:"4px 8px",border:"1px solid #333300"}},"\u{1F4CC} "+ex.note));
 if(S.tips[tk]){
 const pn=h("div",{style:{background:"#0a0a1a",borderRadius:"8px",padding:"10px",marginBottom:"10px",border:"1px solid #1a1a3e"}});
 pn.appendChild(h("div",{style:{fontSize:"11px",color:"#bbb",lineHeight:"1.6",marginBottom:"8px"}},ex.tips));
@@ -193,7 +194,7 @@ ct.appendChild(card)});
 ct.appendChild(h("button",{style:{background:"none",border:"1px solid #222",borderRadius:"10px",color:"#444",padding:"10px",width:"100%",marginTop:"8px",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{S.cw=null;S.view="workout";render()}},"Annuler"));
 return ct}
 
-function startW(){const day=DAYS[S.di];S.cw={dayId:day.id,dayLabel:day.label,date:todayStr(),exercises:day.exercises.map(ex=>({...ex,sd:Array.from({length:ex.sets},()=>({weight:"",reps:""}))})),startTime:Date.now()};S.view="active";render()}
+function startW(){const day=DAYS[S.di];S.cw={dayId:day.id,dayLabel:day.label,date:todayStr(),exercises:day.exercises.map(ex=>{const last=getLS(ex.id);return{...ex,sd:Array.from({length:ex.sets},(_,i)=>{const w=last&&last[i]?String(last[i].weight):ex.dw!=null?String(ex.dw):"";const r=last&&last[i]?String(last[i].reps):"";return{weight:w,reps:r}})}}),startTime:Date.now()};S.view="active";render()}
 function finishW(){const w=S.cw;if(!w)return;
 const cl={dayId:w.dayId,dayLabel:w.dayLabel,date:w.date,duration:Math.round((Date.now()-w.startTime)/60000),
 exercises:w.exercises.map(ex=>({id:ex.id,name:ex.name,sets:ex.sd.filter(s=>s.weight&&s.reps).map(s=>({weight:parseFloat(s.weight),reps:parseInt(s.reps)}))})).filter(ex=>ex.sets.length>0)};
@@ -219,7 +220,10 @@ if(pr&&pr.weight){const ps=h("span",{style:{color:ac,fontWeight:"700",fontSize:"
 card.appendChild(top);
 if(S.tips[tk]){const det=h("div",{style:{marginTop:"6px"}});det.appendChild(h("div",{style:{fontSize:"10px",color:"#777",lineHeight:"1.5",marginBottom:"5px"}},ex.tips));
 if(ex.cues){const cd=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"3px"}});ex.cues.forEach(c=>cd.appendChild(h("span",{style:{background:ac+"22",color:ac,borderRadius:"4px",padding:"2px 5px",fontSize:"8px",fontWeight:"700",display:"inline-block"}},c)));det.appendChild(cd)}
-det.appendChild(h("div",{style:{fontSize:"9px",color:"#444",marginTop:"3px"}},"Repos : "+ex.rest));card.appendChild(det)}
+det.appendChild(h("div",{style:{fontSize:"9px",color:"#444",marginTop:"3px"}},"Repos : "+ex.rest));
+if(ex.dw!=null)det.appendChild(h("div",{style:{fontSize:"9px",color:"#666",marginTop:"2px"}},"\uD83C\uDFCB "+ex.dw+"kg"));
+if(ex.note)det.appendChild(h("div",{style:{fontSize:"9px",color:"#ffd700",marginTop:"2px"}},"\u{1F4CC} "+ex.note));
+card.appendChild(det)}
 ct.appendChild(card)});
 ct.appendChild(h("button",{class:"btn",style:{width:"100%",padding:"14px",borderRadius:"12px",marginTop:"14px",background:"linear-gradient(135deg,"+ac+","+ac+"cc)",color:"#000",fontSize:"15px",letterSpacing:".5px",boxShadow:"0 6px 30px "+ac+"44"},onClick:startW},"Commencer \u2014 "+day.label));
 return ct}
