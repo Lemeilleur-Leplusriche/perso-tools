@@ -33,6 +33,7 @@ input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,in
 <script>
 const D=[
 {id:"push_heavy",label:"Push Lourd",day:"LUN",focus:"Pecs + Epaules + Triceps",rpe:"8-9",
+activation:"2x20 pompes lentes",
 exercises:[
 {id:"inc_db_h",name:"Dev incline halteres 30°",s:4,r:"6-8",rest:150,dw:24,prio:1,
 how:"Banc a 30° PAS 45°. Omoplates serrees en arriere et en bas. Descente lente 3s jusqu'aux clavicules, coudes a 45° du corps. Pousse en haut en convergent legerement les halteres vers l'interieur."},
@@ -52,6 +53,7 @@ how:"Dips : penche en avant pour pecs, droit pour triceps. Descends a 90° minim
 how:"Coudes COLLES au corps, ils ne bougent pas. Seuls les avant-bras travaillent. Extension complete en bas, squeeze 1s. Remontee controlee."}
 ]},
 {id:"pull_heavy",label:"Pull Lourd",day:"MAR",focus:"Dos + Biceps",rpe:"8-9",asym:1,
+note:"Pense COUDES pas mains. Tes mains = des crochets. STRAPS obligatoires sur tous les tirages.",
 exercises:[
 {id:"pullups_h",name:"Tractions prise large",s:4,r:"6-10",rest:150,dw:0,prio:1,
 how:"ROI DU DOS. Utilise des STRAPS. Initie le mouvement en tirant les omoplates vers le bas, pas les bras. Menton au dessus de la barre. Descente complete bras tendus. Focus mental sur le cote gauche a chaque rep."},
@@ -90,6 +92,7 @@ how:"A genoux face a la poulie. Enroule le buste vers le sol, pas de flexion de 
 how:"Corps parfaitement aligne : pas de creux dans le dos, pas les fesses en l'air. Serre les fessiers et les abdos. Respire normalement."}
 ]},
 {id:"push_vol",label:"Push Volume",day:"JEU",focus:"Pecs volume + Epaules",rpe:"7-8",
+activation:"2x20 pompes lentes",
 note:"Tempo 3-1-1 : 3s descente, 1s pause, 1s montee",
 exercises:[
 {id:"inc_machine",name:"Dev incline machine/Smith",s:4,r:"10-12",rest:90,
@@ -234,8 +237,9 @@ ct.appendChild(pills);
 // Day title
 ct.appendChild(h("div",{style:{marginBottom:"20px"}},
 h("div",{style:{fontSize:"22px",fontWeight:"700",marginBottom:"2px"}},day.label),
-h("div",{style:{fontSize:"13px",color:"var(--sub)"}},day.focus+" \u00B7 RPE "+day.rpe)));
+h("div",{style:{fontSize:"13px",color:"var(--sub)"}},day.focus+" \u00B7 Intensite "+day.rpe+"/10")));
 
+if(day.activation)ct.appendChild(h("div",{style:{fontSize:"12px",color:"#aaaa55",background:"#1a1a0a",borderRadius:"10px",padding:"10px 12px",marginBottom:"12px",border:"1px dashed #333300"}},"\uD83D\uDD25 ACTIVATION : "+day.activation));
 if(day.note)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--yellow)",background:"#1a1700",borderRadius:"10px",padding:"10px 12px",marginBottom:"16px"}},day.note));
 if(day.asym)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--accent)",background:"var(--accent2)",borderRadius:"10px",padding:"10px 12px",marginBottom:"16px"}},"Asymetrie lat gauche — Rowing 1 bras : gauche en premier, meme charge G/D"));
 
@@ -287,6 +291,8 @@ h("button",{style:{background:"var(--card)",border:"none",borderRadius:"10px",pa
 h("button",{style:{background:"var(--green)",border:"none",borderRadius:"10px",padding:"8px 14px",fontSize:"13px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit",color:"#111"},onClick:finishW},"Terminer")));
 ct.appendChild(top);
 
+if(day&&day.activation)ct.appendChild(h("div",{style:{fontSize:"11px",color:"#aaaa55",background:"#1a1a0a",borderRadius:"8px",padding:"8px 10px",marginBottom:"12px",border:"1px dashed #333300"}},"\uD83D\uDD25 "+day.activation));
+if(day&&day.note)ct.appendChild(h("div",{style:{fontSize:"11px",color:"var(--yellow)",background:"#1a1700",borderRadius:"8px",padding:"8px 10px",marginBottom:"12px"}},day.note));
 if(day&&day.asym)ct.appendChild(h("div",{style:{fontSize:"11px",color:"var(--accent)",background:"var(--accent2)",borderRadius:"8px",padding:"8px 10px",marginBottom:"12px"}},"Lat gauche — commence par la gauche, meme charge G/D"));
 
 w.ex.forEach((ex,ei)=>{
