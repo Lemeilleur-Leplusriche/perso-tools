@@ -11,10 +11,12 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#777;--accent:#e8734a;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#60a5fa;--radius:14px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#888;--accent:#e8734a;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#60a5fa;--radius:14px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
 body{background:var(--bg);color:var(--text);font-family:var(--font);max-width:420px;margin:0 auto;min-height:100vh;overflow-x:hidden}
 input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5)}
 ::selection{background:rgba(232,115,74,0.25)}
+button:active{transform:scale(.97)}
+input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(232,115,74,0.15)}
 .header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 0}
 .header h1{font-size:18px;font-weight:800;letter-spacing:-0.5px}
 .score-badge{font-size:11px;font-weight:700;font-family:var(--mono);color:var(--accent);background:rgba(232,115,74,0.12);padding:3px 8px;border-radius:6px;margin-left:10px}
@@ -31,8 +33,9 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5)}
 .perfect{margin-top:10px;font-size:13px;color:var(--accent);font-weight:600;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 .criteria-list{display:flex;flex-direction:column;gap:6px}
-.criterion{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .25s;font-size:15px;color:var(--sub);user-select:none}
-.criterion.on{background:rgba(232,115,74,0.08);border-color:rgba(232,115,74,0.2);color:var(--text)}
+.criterion{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s;font-size:15px;color:var(--sub);user-select:none;-webkit-user-select:none;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.criterion:active{transform:scale(.98);box-shadow:none}
+.criterion.on{background:rgba(232,115,74,0.1);border-color:rgba(232,115,74,0.3);color:var(--text);box-shadow:0 1px 6px rgba(232,115,74,0.15)}
 .criterion .emoji{font-size:22px;width:30px;text-align:center;transition:transform .2s}
 .criterion.on .emoji{transform:scale(1.15)}
 .criterion .label{flex:1;text-align:left;font-weight:500}
@@ -84,7 +87,7 @@ input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(0.5)}
 .corr-diff{text-align:center;margin-top:12px;font-size:13px;color:#aaa}
 .tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;background:rgba(17,17,17,.92);backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;padding:6px 0 max(14px,env(safe-area-inset-bottom));z-index:10}
 .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;color:#333;padding:6px 0}
-.tabbar button.active{color:var(--accent)}
+.tabbar button.active{color:var(--accent)}.tabbar button.active .icon{transform:scale(1.15)}
 .tabbar button .icon{font-size:18px}.tabbar button .tlabel{font-size:9px;font-weight:700;letter-spacing:.5px}
 .prot-bar-bg{height:8px;background:#252525;border-radius:4px;overflow:hidden;margin:0 4px}
 .prot-bar-fill{height:100%;border-radius:4px;transition:width .5s}
@@ -151,7 +154,7 @@ const s=Object.keys(ch).filter(k=>ch[k]&&c.some(x=>x.id===k)).length;const p=s/c
 document.getElementById("scoreArc").setAttribute("stroke-dasharray",p*327+" 327");document.getElementById("scoreArc").setAttribute("stroke",sHex(p));document.getElementById("scoreNum").textContent=s;document.getElementById("scoreNum").style.color=sHex(p);document.getElementById("scoreDen").textContent="/"+c.length;document.getElementById("perfectMsg").style.display=s===c.length?"block":"none";
 document.querySelector(".score-ring").style.position="relative";document.getElementById("scoreCenter").style.position="absolute";
 const list=document.getElementById("criteriaList");list.innerHTML=c.map(x=>{const on=ch[x.id];return'<div class="criterion '+(on?"on":"")+'" data-id="'+x.id+'"><span class="emoji">'+x.emoji+'</span><span class="label">'+x.label+'</span><div class="check">&#10003;</div></div>'}).join("");
-list.querySelectorAll(".criterion").forEach(el=>{el.onclick=()=>{const id=el.dataset.id;const ch2=d.checks||{};ch2[id]=!ch2[id];const s2=Object.keys(ch2).filter(k=>ch2[k]&&c.some(x=>x.id===k)).length;pD(cD,{checks:ch2,score:s2});rScore();uBadge()}});
+list.querySelectorAll(".criterion").forEach(el=>{el.onclick=()=>{const id=el.dataset.id;const ch2=d.checks||{};ch2[id]=!ch2[id];const s2=Object.keys(ch2).filter(k=>ch2[k]&&c.some(x=>x.id===k)).length;pD(cD,{checks:ch2,score:s2});try{navigator.vibrate(ch2[id]?30:15)}catch(e){}rScore();uBadge()}});
 rWeek();rProt()}
 
 // Edit habits
