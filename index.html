@@ -245,37 +245,75 @@ if(day.asym)ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--accent)"
 
 // Exercises
 day.exercises.forEach((ex,i)=>{
-const pr=db.pr[ex.id],tk="h_"+ex.id,open=TIP[tk];
-const card=h("div",{style:{background:open?"#1f1f1f":"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:open?"14px":"8px",cursor:"pointer",borderTop:open?"1px solid var(--accent)":"1px solid var(--border)",borderRight:open?"1px solid var(--accent)":"1px solid var(--border)",borderBottom:open?"1px solid var(--accent)":"1px solid var(--border)",borderLeft:ex.prio?"3px solid var(--accent)":ex.asym?"3px solid var(--yellow)":"3px solid var(--border)",transition:"background .2s"},onClick:()=>{TIP[tk]=!TIP[tk];ren()}});
+const pr=db.pr[ex.id],tk="h_"+ex.id,open=TIP[tk],ek="edit_"+ex.id,editing=TIP[ek];
+const last=gLS(ex.id);
+const curW=last&&last[0]?last[0].w:(ex.dw!=null?ex.dw:null);
+const curR=last&&last[0]?last[0].r:null;
+const sug=pr?.suggest;
 
-// Name row
-card.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-h("div",{style:{fontSize:"15px",fontWeight:"600",lineHeight:"1.3"}},ex.name),
-h("div",{style:{fontSize:"11px",color:open?"var(--accent)":"var(--dim)",fontWeight:"600",whiteSpace:"nowrap",marginLeft:"10px"}},open?"\u2715 Fermer":ex.s+"\u00D7"+ex.r)));
+const card=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"14px 16px",marginBottom:"8px",borderLeft:ex.prio?"3px solid var(--accent)":ex.asym?"3px solid var(--yellow)":"3px solid var(--border)",borderTop:"1px solid var(--border)",borderRight:"1px solid var(--border)",borderBottom:"1px solid var(--border)"}});
 
-// Meta line
-const metaLine=[];
-if(ex.dw!=null)metaLine.push(ex.dw+"kg");
-metaLine.push("repos "+Math.floor(ex.rest/60)+"min"+(ex.rest%60?ex.rest%60+"s":""));
-if(pr)metaLine.push("PR "+pr.wt+"kg");
-if(pr&&pr.e1rm)metaLine.push("1RM \u2248"+pr.e1rm+"kg");
-card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--dim)",marginTop:"6px"}},metaLine.join(" \u00B7 ")));
+// Row 1: name + edit pencil
+const row1=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}});
+row1.appendChild(h("div",{style:{fontSize:"14px",fontWeight:"600",flex:"1"}},ex.name));
+const btns=h("div",{style:{display:"flex",gap:"6px",alignItems:"center"}});
+btns.appendChild(h("button",{style:{background:"none",border:"none",color:open?"var(--accent)":"var(--dim)",fontSize:"12px",cursor:"pointer",fontFamily:"inherit",fontWeight:"600",padding:"4px"},onClick:(e)=>{e.stopPropagation();TIP[tk]=!TIP[tk];ren()}},"?"));
+btns.appendChild(h("button",{style:{background:editing?"var(--accent2)":"none",border:"none",color:editing?"var(--accent)":"var(--dim)",fontSize:"14px",cursor:"pointer",padding:"4px 6px",borderRadius:"6px"},onClick:(e)=>{e.stopPropagation();TIP[ek]=!TIP[ek];ren()}},"\u270F"));
+row1.appendChild(btns);
+card.appendChild(row1);
 
-if(pr&&pr.suggest)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--green)",marginTop:"4px",fontWeight:"600"}},"\u2B06 Monter a "+pr.suggest+"kg"));
+// Row 2: weight + reps summary (essential only)
+const row2=h("div",{style:{display:"flex",alignItems:"center",gap:"12px",flexWrap:"wrap"}});
+if(curW!=null)row2.appendChild(h("div",{style:{fontSize:"18px",fontWeight:"700",color:"var(--text)"}},curW+"kg"));
+if(sug)row2.appendChild(h("div",{style:{fontSize:"13px",color:"var(--green)",fontWeight:"600"}},"\u2192 "+sug+"kg"));
+row2.appendChild(h("div",{style:{fontSize:"13px",color:"var(--sub)"}},ex.s+"\u00D7"+ex.r));
+if(pr&&pr.e1rm)row2.appendChild(h("div",{style:{fontSize:"11px",color:"var(--dim)"}},"1RM "+pr.e1rm));
+card.appendChild(row2);
 
-if(ex.note)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--yellow)",marginTop:"4px"}},ex.note));
+// Edit mode: arrows to adjust default weight
+if(editing){
+const editRow=h("div",{style:{marginTop:"12px",padding:"12px",background:"var(--bg)",borderRadius:"10px",border:"1px solid var(--border)"}});
+const wKey="dw_"+ex.id;
+const customW=TIP[wKey]!=null?TIP[wKey]:(curW!=null?curW:0);
+
+const wRow=h("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:"16px",marginBottom:"10px"}});
+wRow.appendChild(h("button",{style:{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"10px",color:"var(--text)",width:"44px",height:"44px",fontSize:"20px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:(e)=>{e.stopPropagation();TIP[wKey]=(customW||0)-1;ren()}},"\u2212"));
+wRow.appendChild(h("div",{style:{fontSize:"28px",fontWeight:"800",minWidth:"80px",textAlign:"center"}},customW+"kg"));
+wRow.appendChild(h("button",{style:{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"10px",color:"var(--text)",width:"44px",height:"44px",fontSize:"20px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:(e)=>{e.stopPropagation();TIP[wKey]=(customW||0)+1;ren()}},"+"));
+editRow.appendChild(wRow);
+
+// Quick increments
+const qRow=h("div",{style:{display:"flex",gap:"6px",justifyContent:"center",marginBottom:"10px"}});
+[-5,-2,2,5].forEach(d=>{
+qRow.appendChild(h("button",{style:{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"8px",color:d>0?"var(--green)":"var(--sub)",padding:"6px 12px",fontSize:"12px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},
+onClick:(e)=>{e.stopPropagation();TIP[wKey]=(customW||0)+d;ren()}},(d>0?"+":"")+d))});
+editRow.appendChild(qRow);
+
+// Save button
+editRow.appendChild(h("button",{style:{width:"100%",background:"var(--accent)",border:"none",borderRadius:"10px",color:"#fff",padding:"10px",fontSize:"13px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},
+onClick:(e)=>{e.stopPropagation();
+// Save as a "virtual" last session so it shows next time
+const newW=TIP[wKey];
+const exDef=D.flatMap(d=>d.exercises).find(x=>x.id===ex.id);
+if(exDef)exDef.dw=newW;
+TIP[ek]=false;delete TIP[wKey];ren()}},"Enregistrer "+TIP[wKey]+"kg"));
+card.appendChild(editRow)}
+
+if(ex.note&&!editing)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--yellow)",marginTop:"6px"}},ex.note));
 
 // Description (expanded)
 if(open){
 const desc=h("div",{style:{marginTop:"12px",padding:"12px 14px",background:"var(--bg)",borderRadius:"10px",border:"1px solid var(--border)"}});
 desc.appendChild(h("div",{style:{fontSize:"10px",color:"var(--accent)",fontWeight:"700",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"8px"}},"Comment bien faire"));
 desc.appendChild(h("div",{style:{fontSize:"13px",color:"#ccc",lineHeight:"1.7"}},ex.how));
-card.appendChild(desc);
-}
+card.appendChild(desc)}
+
 ct.appendChild(card)});
 
-// Start button
-ct.appendChild(h("button",{style:{width:"100%",padding:"16px",borderRadius:"14px",border:"none",background:"var(--accent)",color:"#fff",fontSize:"16px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit",marginTop:"16px"},onClick:startW},"Commencer"));
+// Start session (subtle, at the bottom)
+ct.appendChild(h("div",{style:{display:"flex",gap:"8px",marginTop:"16px"}},
+h("button",{style:{flex:"1",padding:"14px",borderRadius:"14px",border:"none",background:"var(--accent)",color:"#fff",fontSize:"15px",fontWeight:"700",cursor:"pointer",fontFamily:"inherit"},onClick:startW},"\uD83C\uDFCB Go"),
+h("button",{style:{padding:"14px 18px",borderRadius:"14px",border:"1px solid var(--border)",background:"var(--card)",color:"var(--sub)",fontSize:"13px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{V="stats";ren()}},"\uD83D\uDCC8")));
 return ct}
 
 // ── ACTIVE ──
