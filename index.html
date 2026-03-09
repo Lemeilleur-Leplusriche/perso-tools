@@ -257,8 +257,8 @@ const card=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:
 const row1=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}});
 row1.appendChild(h("div",{style:{fontSize:"14px",fontWeight:"600",flex:"1"}},ex.name));
 const btns=h("div",{style:{display:"flex",gap:"6px",alignItems:"center"}});
-btns.appendChild(h("button",{style:{background:"none",border:"none",color:open?"var(--accent)":"var(--dim)",fontSize:"12px",cursor:"pointer",fontFamily:"inherit",fontWeight:"600",padding:"4px"},onClick:(e)=>{e.stopPropagation();TIP[tk]=!TIP[tk];ren()}},"?"));
-btns.appendChild(h("button",{style:{background:editing?"var(--accent2)":"none",border:"none",color:editing?"var(--accent)":"var(--dim)",fontSize:"14px",cursor:"pointer",padding:"4px 6px",borderRadius:"6px"},onClick:(e)=>{e.stopPropagation();TIP[ek]=!TIP[ek];ren()}},"\u270F"));
+btns.appendChild(h("button",{style:{background:open?"var(--accent)":"var(--card)",border:"1px solid "+(open?"var(--accent)":"var(--border)"),color:open?"#fff":"var(--sub)",fontSize:"11px",cursor:"pointer",fontFamily:"inherit",fontWeight:"700",padding:"6px 12px",borderRadius:"8px"},onClick:(e)=>{e.stopPropagation();TIP[tk]=!TIP[tk];ren()}},open?"\u2715 Fermer":"Form"));
+btns.appendChild(h("button",{style:{background:editing?"var(--accent)":"var(--card)",border:"1px solid "+(editing?"var(--accent)":"var(--border)"),color:editing?"#fff":"var(--sub)",fontSize:"11px",cursor:"pointer",fontFamily:"inherit",fontWeight:"700",padding:"6px 12px",borderRadius:"8px"},onClick:(e)=>{e.stopPropagation();TIP[ek]=!TIP[ek];ren()}},editing?"\u2715":"\u270F Poids"));
 row1.appendChild(btns);
 card.appendChild(row1);
 
@@ -426,7 +426,10 @@ const allMaxed=ex.sets.length>0&&ex.sets.every(s=>s.r>=maxR);
 if(allMaxed){const curW=Math.max(...ex.sets.map(s=>s.w));db.pr[ex.id].suggest=curW+2;}
 else{delete db.pr[ex.id]?.suggest;}
 }});
-db.w.push(cl);save();CW=null;V="home";ren()}
+db.w.push(cl);save();
+// Sync avec Daily Hub : auto-check sport
+try{localStorage.setItem("ppl-hub-sync",cl.date)}catch(e){}
+CW=null;V="home";ren()}
 
 // ── HISTORY ──
 function rHist(){
