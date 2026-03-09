@@ -144,7 +144,10 @@ h+='</div>';if(cnt>0){const a=(tot/cnt).toFixed(1);h+='<div class="week-avg">Moy
 // Protein bar
 function rProt(){const el=document.getElementById("protBar");const d=gD(cD);const m=d.meals||[];const p=m.reduce((s,x)=>s+(x.protein||0),0);if(!p&&!m.length){el.innerHTML="";return}const pct=Math.min(p/TP,1);const c=pct>=1?"var(--green)":pct>=.6?"var(--blue)":"var(--red)";el.innerHTML='<div class="prot-bar-bg"><div class="prot-bar-fill" style="width:'+Math.round(pct*100)+'%;background:'+c+'"></div></div><div class="prot-label"><span>\uD83C\uDF57 '+p+'g prot</span><span>/ '+TP+'g</span></div>'}
 
-function rScore(){const c=gC();const d=gD(cD);const ch=d.checks||{};const s=Object.keys(ch).filter(k=>ch[k]&&c.some(x=>x.id===k)).length;const p=s/c.length;
+function rScore(){const c=gC();const d=gD(cD);const ch=d.checks||{};
+// Sync PPL → auto-check sport
+try{const sync=localStorage.getItem("ppl-hub-sync");if(sync===cD&&!ch.sport){ch.sport=true;const s2=Object.keys(ch).filter(k=>ch[k]&&c.some(x=>x.id===k)).length;pD(cD,{checks:ch,score:s2})}}catch(e){}
+const s=Object.keys(ch).filter(k=>ch[k]&&c.some(x=>x.id===k)).length;const p=s/c.length;
 document.getElementById("scoreArc").setAttribute("stroke-dasharray",p*327+" 327");document.getElementById("scoreArc").setAttribute("stroke",sHex(p));document.getElementById("scoreNum").textContent=s;document.getElementById("scoreNum").style.color=sHex(p);document.getElementById("scoreDen").textContent="/"+c.length;document.getElementById("perfectMsg").style.display=s===c.length?"block":"none";
 document.querySelector(".score-ring").style.position="relative";document.getElementById("scoreCenter").style.position="absolute";
 const list=document.getElementById("criteriaList");list.innerHTML=c.map(x=>{const on=ch[x.id];return'<div class="criterion '+(on?"on":"")+'" data-id="'+x.id+'"><span class="emoji">'+x.emoji+'</span><span class="label">'+x.label+'</span><div class="check">&#10003;</div></div>'}).join("");
