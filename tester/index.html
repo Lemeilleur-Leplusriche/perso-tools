@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Page Tester</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#777;--accent:#e8734a;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#60a5fa;--radius:14px;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font);max-width:480px;margin:0 auto;min-height:100vh;padding:20px 16px 100px}
+h1{font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.sub{font-size:13px;color:var(--sub);margin-bottom:24px}
+.input-row{display:flex;gap:8px;margin-bottom:20px}
+.input-row input{flex:1;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:var(--font);outline:none}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input::placeholder{color:#444}
+.btn{padding:14px 20px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;font-size:15px;font-family:var(--font);transition:all .2s}
+.btn:disabled{background:#252525;color:#555;cursor:wait}
+.btn-full{width:100%;padding:16px}
+
+/* Score circle */
+.score-wrap{text-align:center;margin:28px 0}
+.score-big{font-size:64px;font-weight:800;font-family:var(--mono);line-height:1}
+.score-label{font-size:13px;color:var(--sub);margin-top:4px}
+
+/* Cards */
+.card{background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid var(--border);margin-bottom:12px}
+.card-title{font-size:11px;color:var(--sub);letter-spacing:1.5px;font-weight:600;margin-bottom:12px;text-transform:uppercase}
+.card-accent{border-left:3px solid var(--accent)}
+.card-green{border-left:3px solid var(--green)}
+.card-red{border-left:3px solid var(--red)}
+.card-blue{border-left:3px solid var(--blue)}
+
+/* Items */
+.item{padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6}
+.item:last-child{border-bottom:none}
+.item .label{font-weight:600;margin-bottom:2px}
+.item .detail{color:var(--sub);font-size:13px}
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;margin:2px}
+.tag-green{background:rgba(34,197,94,0.15);color:var(--green)}
+.tag-red{background:rgba(239,68,68,0.15);color:var(--red)}
+.tag-yellow{background:rgba(234,179,8,0.15);color:var(--yellow)}
+.tag-blue{background:rgba(96,165,250,0.15);color:var(--blue)}
+
+/* Progress bars */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog-label{font-size:12px;color:var(--sub);min-width:80px;font-weight:600}
+.prog-bar{flex:1;height:8px;background:#252525;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .5s}
+.prog-val{font-size:12px;font-family:var(--mono);font-weight:700;min-width:35px;text-align:right}
+
+/* Loading */
+.loading{text-align:center;padding:60px 0}
+.loading .spinner{display:inline-block;width:40px;height:40px;border:4px solid #252525;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading .text{color:var(--sub);font-size:14px;margin-top:16px}
+
+/* History */
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--card);border-radius:10px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border)}
+.history-item:active{background:#222}
+.history-item .url{font-size:13px;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:10px}
+.history-item .hscore{font-size:16px;font-weight:800;font-family:var(--mono)}
+.history-item .hdate{font-size:10px;color:var(--dim);margin-top:2px}
+
+.empty{text-align:center;color:#333;padding:40px;font-size:14px}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:20px}
+.tab{flex:1;padding:10px;border-radius:10px;border:none;background:var(--card);color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);text-align:center;border:1px solid var(--border)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<h1>Page Tester</h1>
+<div class="sub">Analyse n'importe quelle page web avec l'IA</div>
+
+<div class="tabs">
+  <button class="tab active" id="tabAnalyze" onclick="showTab('analyze')">Analyser</button>
+  <button class="tab" id="tabHistory" onclick="showTab('history')">Historique</button>
+</div>
+
+<div id="viewAnalyze">
+  <div class="input-row">
+    <input type="url" id="urlInput" placeholder="https://example.com" autocomplete="url">
+    <button class="btn" id="goBtn" onclick="analyze()">Go</button>
+  </div>
+
+  <!-- Quick links -->
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px" id="quickLinks">
+    <button onclick="setUrl('https://lemeilleur-leplusriche.github.io/perso-tools/')" style="background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--sub);padding:6px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">PPL Tracker</button>
+    <button onclick="setUrl('https://lemeilleur-leplusriche.github.io/perso-tools/hub/')" style="background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--sub);padding:6px 10px;font-size:11px;cursor:pointer;font-family:var(--font)">Daily Hub</button>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<div id="viewHistory" style="display:none">
+  <div id="historyList"></div>
+</div>
+
+<script>
+const LK="page-tester-history";
+function getHist(){try{return JSON.parse(localStorage.getItem(LK)||"[]")}catch(e){return[]}}
+function saveHist(h){localStorage.setItem(LK,JSON.stringify(h))}
+
+function setUrl(u){document.getElementById("urlInput").value=u}
+
+function showTab(t){
+  document.getElementById("viewAnalyze").style.display=t==="analyze"?"block":"none";
+  document.getElementById("viewHistory").style.display=t==="history"?"block":"none";
+  document.getElementById("tabAnalyze").className="tab"+(t==="analyze"?" active":"");
+  document.getElementById("tabHistory").className="tab"+(t==="history"?" active":"");
+  if(t==="history")renderHistory();
+}
+
+function renderHistory(){
+  const h=getHist();const el=document.getElementById("historyList");
+  if(!h.length){el.innerHTML='<div class="empty">Aucune analyse</div>';return}
+  el.innerHTML=h.map((x,i)=>{
+    const c=x.score>=80?"var(--green)":x.score>=60?"var(--yellow)":"var(--red)";
+    return'<div class="history-item" onclick="showResult('+i+')"><div><div class="url">'+x.url+'</div><div class="hdate">'+x.date+'</div></div><div class="hscore" style="color:'+c+'">'+x.score+'</div></div>'
+  }).join("");
+}
+
+function showResult(i){
+  const h=getHist();if(!h[i])return;
+  showTab("analyze");
+  document.getElementById("urlInput").value=h[i].url;
+  displayResult(h[i].data);
+}
+
+async function analyze(){
+  const url=document.getElementById("urlInput").value.trim();
+  if(!url){return}
+  const btn=document.getElementById("goBtn");
+  btn.disabled=true;btn.textContent="...";
+  document.getElementById("result").innerHTML='<div class="loading"><div class="spinner"></div><div class="text">Analyse en cours...</div></div>';
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",max_tokens:4000,
+        tools:[{type:"web_search_20250305",name:"web_search"}],
+        messages:[{role:"user",content:"Analyse cette page web en detail : "+url+"\n\nFais une recherche web pour trouver la page, puis analyse-la.\n\nReponds UNIQUEMENT en JSON valide (pas de backticks, pas de texte avant/apres) avec cette structure exacte :\n{\n\"score\": number (0-100),\n\"summary\": \"resume en 1 phrase\",\n\"categories\": [\n{\"name\": \"Design\", \"score\": number (0-100), \"comment\": \"...\"},\n{\"name\": \"UX/Ergonomie\", \"score\": number (0-100), \"comment\": \"...\"},\n{\"name\": \"Contenu/Copy\", \"score\": number (0-100), \"comment\": \"...\"},\n{\"name\": \"Performance\", \"score\": number (0-100), \"comment\": \"...\"},\n{\"name\": \"Mobile\", \"score\": number (0-100), \"comment\": \"...\"},\n{\"name\": \"Conversion/CTA\", \"score\": number (0-100), \"comment\": \"...\"}\n],\n\"positifs\": [\"point fort 1\", \"point fort 2\", \"point fort 3\"],\n\"ameliorations\": [\n{\"titre\": \"...\", \"detail\": \"...\", \"priorite\": \"haute|moyenne|basse\"},\n{\"titre\": \"...\", \"detail\": \"...\", \"priorite\": \"haute|moyenne|basse\"},\n{\"titre\": \"...\", \"detail\": \"...\", \"priorite\": \"haute|moyenne|basse\"},\n{\"titre\": \"...\", \"detail\": \"...\", \"priorite\": \"haute|moyenne|basse\"},\n{\"titre\": \"...\", \"detail\": \"...\", \"priorite\": \"haute|moyenne|basse\"}\n],\n\"verdict\": \"verdict final en 2-3 phrases\"\n}"}]
+      })
+    });
+    const data=await res.json();
+    // Extract text from all content blocks
+    const texts=data.content?.filter(b=>b.type==="text").map(b=>b.text)||[];
+    const raw=texts.join("");
+    const clean=raw.replace(/```json|```/g,"").trim();
+    // Find JSON in response
+    const jsonStart=clean.indexOf("{");
+    const jsonEnd=clean.lastIndexOf("}")+1;
+    const jsonStr=clean.substring(jsonStart,jsonEnd);
+    const parsed=JSON.parse(jsonStr);
+    
+    // Save to history
+    const hist=getHist();
+    hist.unshift({url,score:parsed.score,date:new Date().toLocaleDateString("fr-FR"),data:parsed});
+    if(hist.length>20)hist.pop();
+    saveHist(hist);
+    
+    displayResult(parsed);
+  }catch(e){
+    console.error(e);
+    document.getElementById("result").innerHTML='<div class="card card-red"><div class="card-title">ERREUR</div><div style="font-size:14px">Impossible d\'analyser cette page. Verifie l\'URL et reessaie.</div></div>';
+  }
+  btn.disabled=false;btn.textContent="Go";
+}
+
+function displayResult(d){
+  const el=document.getElementById("result");
+  const sc=d.score>=80?"var(--green)":d.score>=60?"var(--yellow)":"var(--red)";
+  
+  let html='<div class="score-wrap"><div class="score-big" style="color:'+sc+'">'+d.score+'</div><div class="score-label">/100 — '+d.summary+'</div></div>';
+
+  // Category scores
+  html+='<div class="card" style="margin-bottom:16px"><div class="card-title">SCORES PAR CATEGORIE</div>';
+  d.categories?.forEach(c=>{
+    const co=c.score>=80?"var(--green)":c.score>=60?"var(--yellow)":"var(--red)";
+    html+='<div class="prog-row"><div class="prog-label">'+c.name+'</div><div class="prog-bar"><div class="prog-fill" style="width:'+c.score+'%;background:'+co+'"></div></div><div class="prog-val" style="color:'+co+'">'+c.score+'</div></div>';
+  });
+  html+='</div>';
+
+  // Positifs
+  html+='<div class="card card-green"><div class="card-title">\u2705 POINTS FORTS</div>';
+  d.positifs?.forEach(p=>{html+='<div class="item">'+p+'</div>'});
+  html+='</div>';
+
+  // Ameliorations
+  html+='<div class="card card-red"><div class="card-title">\uD83D\uDEE0 AMELIORATIONS</div>';
+  d.ameliorations?.forEach(a=>{
+    const tc=a.priorite==="haute"?"tag-red":a.priorite==="moyenne"?"tag-yellow":"tag-blue";
+    html+='<div class="item"><div class="label">'+a.titre+' <span class="tag '+tc+'">'+a.priorite+'</span></div><div class="detail">'+a.detail+'</div></div>';
+  });
+  html+='</div>';
+
+  // Verdict
+  html+='<div class="card card-accent"><div class="card-title">\uD83C\uDFAF VERDICT</div><div style="font-size:14px;line-height:1.7">'+d.verdict+'</div></div>';
+
+  el.innerHTML=html;
+}
+
+// Enter key
+document.getElementById("urlInput").onkeydown=e=>{if(e.key==="Enter")analyze()};
+
+// SW
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+// Install
+let dp;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;const b=document.createElement("button");b.id="installBtn";b.textContent="Installer";b.style.cssText="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;z-index:200;box-shadow:0 4px 20px rgba(232,115,74,0.4)";b.onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;b.remove()};document.body.appendChild(b)});
+</script>
+</body>
+</html>
