@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111111">
+<title>Face Sculpt</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="../face-icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#111;--card:#1a1a1a;--border:#252525;--accent:#e8734a;
+  --text:#eee;--sub:#888;--green:#4ade80;--r:14px
+}
+html{background:var(--bg)}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);
+  min-height:100dvh;max-width:500px;margin:0 auto;padding-bottom:90px;
+  overscroll-behavior:none
+}
+
+/* ─── HEADER ─── */
+.hdr{
+  padding:20px 16px 14px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--bg);z-index:50;
+  border-bottom:1px solid var(--border)
+}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#c4552f);display:flex;align-items:center;justify-content:center;font-size:18px}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hdr h1 small{font-size:11px;color:var(--sub);font-weight:400;display:block;margin-top:1px}
+.streak{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:5px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px
+}
+.streak em{font-style:normal;color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* ─── TABS ─── */
+.tabs{
+  display:flex;gap:6px;padding:14px 16px 10px;
+  position:sticky;top:63px;background:var(--bg);z-index:40
+}
+.tab{
+  flex:1;padding:10px 8px 8px;border-radius:var(--r);border:1px solid var(--border);
+  background:var(--card);text-align:center;cursor:pointer;transition:all .15s ease;
+  position:relative;overflow:hidden
+}
+.tab.active{background:var(--accent);border-color:var(--accent)}
+.tab.active .tab-label{color:#fff}
+.tab.active .tab-sub{color:rgba(255,255,255,.7)}
+.tab.complete::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--green);border-radius:0 0 4px 4px
+}
+.tab-label{font-size:14px;font-weight:600;color:var(--text);transition:color .15s}
+.tab-sub{font-size:11px;color:var(--sub);margin-top:2px;transition:color .15s;font-variant-numeric:tabular-nums}
+
+/* ─── PROGRESS ─── */
+.prog-wrap{padding:8px 16px 0}
+.prog-bar{height:5px;background:var(--card);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#f4a261);border-radius:3px;transition:width .35s ease}
+.prog-label{font-size:12px;color:var(--sub);padding:6px 16px 0;text-align:center}
+.prog-label b{color:var(--accent)}
+
+/* ─── EXERCISE LIST ─── */
+.list{padding:6px 16px}
+.zone{
+  font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;
+  letter-spacing:1.2px;padding:18px 0 8px;display:flex;align-items:center;gap:8px
+}
+.zone::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.exo{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:8px;display:flex;gap:12px;
+  transition:all .15s ease;cursor:pointer;user-select:none;
+  animation:fadeUp .3s ease both
+}
+.exo:active{transform:scale(.985)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.exo.done{border-color:rgba(74,222,128,.25);background:rgba(74,222,128,.04)}
+.exo.done .exo-name{opacity:.5;text-decoration:line-through}
+.exo.done .exo-muscle{opacity:.4}
+
+.chk{
+  width:24px;height:24px;border-radius:7px;border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;margin-top:1px
+}
+.exo.done .chk{background:var(--green);border-color:var(--green)}
+.exo.done .chk::after{content:'✓';color:#111;font-size:13px;font-weight:700}
+
+.exo-body{flex:1;min-width:0}
+.exo-name{font-size:14px;font-weight:600;line-height:1.3;transition:all .15s}
+.exo-muscle{font-size:12px;color:var(--sub);margin:2px 0 8px}
+.exo-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:500;white-space:nowrap}
+.tag.reps{background:rgba(232,115,74,.1);color:var(--accent)}
+.tag.freq{background:rgba(255,255,255,.05);color:var(--sub)}
+.tag.timer{background:rgba(74,222,128,.1);color:var(--green);cursor:pointer}
+.tag.timer:active{opacity:.7}
+
+.form-btn{
+  background:none;border:1px solid var(--border);border-radius:8px;
+  padding:6px 10px;color:var(--sub);font-size:11px;font-family:inherit;
+  cursor:pointer;flex-shrink:0;align-self:center;transition:all .15s;font-weight:500
+}
+.form-btn:active{border-color:var(--accent);color:var(--accent)}
+
+/* ─── BOTTOM BAR ─── */
+.bot{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--card);border-top:1px solid var(--border);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  display:flex;gap:8px;z-index:30
+}
+.bot-btn{
+  flex:1;padding:10px 8px;border-radius:var(--r);border:1px solid var(--border);
+  background:var(--bg);text-align:center;font-family:inherit;cursor:pointer;transition:all .15s
+}
+.bot-btn:active{background:var(--card)}
+.bot-val{font-size:18px;font-weight:700;display:block;margin-bottom:1px;color:var(--text);font-variant-numeric:tabular-nums}
+.bot-val.or{color:var(--accent)}
+.bot-lbl{font-size:10px;color:var(--sub);font-weight:500}
+
+/* ─── MODAL FORM ─── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s
+}
+.modal-bg.show{opacity:1;pointer-events:auto}
+.modal{
+  background:#1e1e1e;border-radius:20px 20px 0 0;padding:28px 20px 36px;
+  width:100%;max-width:500px;max-height:75dvh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .25s ease
+}
+.modal-bg.show .modal{transform:translateY(0)}
+.modal-pill{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal h3{font-size:17px;font-weight:700}
+.modal .m-muscle{font-size:13px;color:var(--accent);margin:2px 0 16px}
+.modal .m-row{display:flex;gap:12px;margin-bottom:14px}
+.modal .m-detail{flex:1;background:var(--bg);border-radius:10px;padding:10px 12px}
+.modal .m-detail-label{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.modal .m-detail-val{font-size:13px;font-weight:600}
+.modal .m-desc{font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:14px}
+.modal .m-tip{
+  background:rgba(232,115,74,.08);border-left:3px solid var(--accent);
+  padding:10px 14px;border-radius:0 10px 10px 0;font-size:12px;
+  color:var(--text);line-height:1.55;margin-bottom:20px
+}
+.modal-close{
+  width:100%;padding:14px;border-radius:var(--r);background:var(--accent);
+  color:#fff;border:none;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer
+}
+.modal-close:active{opacity:.85}
+
+/* ─── TIMER ─── */
+.timer-bg{
+  position:fixed;inset:0;background:rgba(10,10,10,.92);z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .2s
+}
+.timer-bg.show{opacity:1;pointer-events:auto}
+.timer-name{font-size:14px;color:var(--sub);margin-bottom:4px}
+.timer-ring{position:relative;width:200px;height:200px;margin-bottom:32px}
+.timer-ring svg{width:200px;height:200px;transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:6}
+.timer-ring .track{stroke:var(--border)}
+.timer-ring .fill{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .95s linear}
+.timer-time{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:48px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-1px
+}
+.timer-time span{color:var(--accent)}
+.timer-btns{display:flex;gap:12px}
+.t-btn{
+  padding:14px 36px;border-radius:var(--r);border:none;font-size:15px;
+  font-weight:600;font-family:inherit;cursor:pointer
+}
+.t-btn.go{background:var(--accent);color:#fff}
+.t-btn.go:active{opacity:.85}
+.t-btn.x{background:var(--border);color:var(--text)}
+
+/* ─── CALENDAR ─── */
+.cal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s
+}
+.cal-bg.show{opacity:1;pointer-events:auto}
+.cal{background:#1e1e1e;border-radius:20px;padding:24px 20px;width:calc(100% - 32px);max-width:400px}
+.cal h3{font-size:16px;font-weight:700;text-align:center;margin-bottom:16px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-dl{text-align:center;font-size:10px;color:var(--sub);padding:4px 0;font-weight:600}
+.cal-c{
+  aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums
+}
+.cal-c.e{opacity:0}
+.cal-c.full{background:var(--accent);color:#fff;font-weight:600}
+.cal-c.part{background:rgba(232,115,74,.25);color:var(--accent);font-weight:600}
+.cal-c.today{box-shadow:inset 0 0 0 2px var(--accent)}
+.cal-close{
+  width:100%;padding:12px;border-radius:var(--r);background:var(--border);
+  color:var(--text);border:none;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-icon">🗿</div>
+    <h1>Face Sculpt<small>Programme facial quotidien</small></h1>
+  </div>
+  <div class="streak">🔥 <em id="sStreak">0</em>j</div>
+</div>
+
+<div class="tabs" id="eTabs"></div>
+<div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="eProgFill"></div></div></div>
+<div class="prog-label" id="eProgLabel"></div>
+<div class="list" id="eList"></div>
+
+<div class="bot">
+  <button class="bot-btn" onclick="openCal()"><span class="bot-val or" id="sDays">0</span><span class="bot-lbl">jours actifs</span></button>
+  <button class="bot-btn" onclick="resetDay()"><span class="bot-val">↺</span><span class="bot-lbl">reset jour</span></button>
+  <button class="bot-btn" onclick="openCal()"><span class="bot-val" id="sWeek">0/7</span><span class="bot-lbl">cette semaine</span></button>
+</div>
+
+<div class="modal-bg" id="mForm" onclick="this===event.target&&this.classList.remove('show')"><div class="modal" id="mFormIn"></div></div>
+<div class="cal-bg" id="mCal" onclick="this===event.target&&this.classList.remove('show')"><div class="cal" id="mCalIn"></div></div>
+
+<div class="timer-bg" id="mTimer">
+  <div class="timer-name" id="tName"></div>
+  <div class="timer-ring">
+    <svg viewBox="0 0 200 200"><circle class="track" cx="100" cy="100" r="88"/><circle class="fill" id="tCircle" cx="100" cy="100" r="88"/></svg>
+    <div class="timer-time" id="tDisp">0:<span>00</span></div>
+  </div>
+  <div class="timer-btns">
+    <button class="t-btn x" onclick="tStop()">Fermer</button>
+    <button class="t-btn go" id="tGoBtn" onclick="tToggle()">Démarrer</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════ PROGRAMME DU PDF ═══════════ */
+const EX={
+matin:[
+  {id:'mewing',zone:'Mâchoire',name:'Mewing',muscle:'Masséter',reps:'Posture permanente',timer:0,freq:'24/7',
+   form:'Langue entièrement collée au palais (pas juste la pointe). Dents légèrement serrées, lèvres fermées. Respire par le nez.',
+   tip:'Le game changer n°1. Restructure la mâchoire en 3-6 mois. Posture à maintenir 24h/24.'},
+  {id:'chewing',zone:'Mâchoire',name:'Chewing-gum dur',muscle:'Masséter',reps:'3 × 5 min',timer:300,freq:'Tous les jours',
+   form:'Mâche un chewing-gum dur (Falim, mastic) en alternant les côtés. Mouvements lents et puissants.',
+   tip:'Résultats visibles en 4-8 semaines. Le masséter donne la jawline carrée et définie.'},
+  {id:'sourire',zone:'Pommettes',name:'Sourire large tenu',muscle:'Zygomatiques (grand + petit)',reps:'3 × 15 (10s hold)',timer:180,freq:'Tous les jours',
+   form:'Souris le plus large possible en montrant les dents. Tiens 10 secondes. Tu dois sentir les pommettes brûler.',
+   tip:'Remonte les pommettes et creuse naturellement les joues.'},
+  {id:'joues',zone:'Pommettes',name:'Transferts joues gonflées',muscle:'Buccinateur',reps:'3 × 20 transferts',timer:120,freq:'Tous les jours',
+   form:'Gonfle les joues d\'air au max. Transfère d\'une joue à l\'autre lentement. Les joues doivent être bien tendues.',
+   tip:'Tonifie les joues = visage sculpté, réduit l\'effet babyface.'},
+],
+midi:[
+  {id:'yeux',zone:'Yeux',name:'Squint + Open',muscle:'Orbiculaire de l\'œil',reps:'3 × 15',timer:90,freq:'Tous les jours',
+   form:'Plisse fort les yeux (comme si le soleil t\'éblouit) puis ouvre grand. Concentre-toi sur la contraction autour des yeux.',
+   tip:'Réduit les poches sous les yeux et donne un regard plus vif et alerte.'},
+  {id:'sourcils',zone:'Front',name:'Lever sourcils résistance',muscle:'Frontal',reps:'3 × 12 (5s hold)',timer:120,freq:'5j / semaine',
+   form:'Doigts posés sur le front au-dessus des sourcils. Lève les sourcils pendant que les doigts résistent. Tiens 5s.',
+   tip:'Ouvre le regard, combat l\'affaissement du front. Air plus jeune.'},
+  {id:'lateral',zone:'Mâchoire',name:'Mouvements latéraux mâchoire',muscle:'Ptérygoïdiens (médial + latéral)',reps:'3 × 15 / côté',timer:0,freq:'5j / semaine',
+   form:'Place ta main sur le côté de la mâchoire. Pousse la mâchoire vers le côté contre la résistance. Alterne.',
+   tip:'Muscles profonds qui renforcent la structure de la mâchoire.'},
+],
+soir:[
+  {id:'kiss',zone:'Cou',name:'Kiss the ceiling',muscle:'Platysma',reps:'3 × 12 (10s hold)',timer:120,freq:'5j / semaine',
+   form:'Tête en arrière, projette les lèvres vers le plafond. Tiens 10s. Tu dois sentir le cou se tendre.',
+   tip:'Définit la jawline vue de profil. Muscle souvent négligé mais très impactant.'},
+  {id:'temporal',zone:'Mâchoire',name:'Serrer dents tenu',muscle:'Temporal',reps:'3 × 12 (5s hold)',timer:0,freq:'5j / semaine',
+   form:'Serre les dents fort 5 secondes, relâche complètement. Contraction au-dessus des tempes.',
+   tip:'Contribue à un visage anguleux. Surtout visible sous 15% de bodyfat.'},
+  {id:'massage',zone:'Front',name:'Massage corrugateur',muscle:'Corrugateur du sourcil',reps:'2 × 1 min',timer:60,freq:'Tous les jours (soir)',
+   form:'Masse en mouvements circulaires entre les sourcils. Détends consciemment la zone.',
+   tip:'On DÉTEND, pas on renforce. Évite les rides du lion. Air plus accessible.'},
+  {id:'neck',zone:'Cou',name:'Neck curls',muscle:'SCM (sterno-cléido-mastoïdien)',reps:'3 × 15-20',timer:0,freq:'3j / semaine',
+   form:'Allongé, tête dans le vide. Remonte la tête en contractant le cou. Mouvement lent et contrôlé.',
+   tip:'Un cou musclé encadre le visage. 3×/semaine seulement — besoin de repos.'},
+]};
+
+const SLOTS=['matin','midi','soir'];
+const SLOT_L={matin:'☀️ Matin',midi:'🌤️ Midi',soir:'🌙 Soir'};
+const ZONE_IC={'Mâchoire':'🦴','Pommettes':'💎','Yeux':'👁️','Front':'🧠','Cou':'🏛️'};
+const LS='facesculpt-data';
+const todayK=()=>new Date().toISOString().split('T')[0];
+
+let slot='matin';
+
+/* ═══════════ STORAGE ═══════════ */
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS))||{}}catch{return{}}};
+const save=d=>localStorage.setItem(LS,JSON.stringify(d));
+const today=()=>load()[todayK()]||{};
+const check=(id,v)=>{const d=load(),k=todayK();if(!d[k])d[k]={};d[k][id]=v;save(d)};
+const allEx=()=>[...EX.matin,...EX.midi,...EX.soir];
+
+/* ═══════════ RENDER ═══════════ */
+function R(){rTabs();rList();rProg();rStats()}
+
+function rTabs(){
+  const c=today();
+  document.getElementById('eTabs').innerHTML=SLOTS.map(s=>{
+    const exs=EX[s],done=exs.filter(e=>c[e.id]).length,tot=exs.length,full=done===tot&&tot>0;
+    return`<div class="tab${s===slot?' active':''}${full?' complete':''}" onclick="slot='${s}';R()">
+      <div class="tab-label">${SLOT_L[s]}</div>
+      <div class="tab-sub">${full?'✓ Terminé':done+'/'+tot}</div>
+    </div>`}).join('')
+}
+
+function rList(){
+  const c=today();let h='',lz='';
+  EX[slot].forEach((e,i)=>{
+    if(e.zone!==lz){h+=`<div class="zone">${ZONE_IC[e.zone]||''} ${e.zone}</div>`;lz=e.zone}
+    const d=c[e.id]?'done':'';
+    h+=`<div class="exo ${d}" style="animation-delay:${i*40}ms" onclick="toggle('${e.id}')">
+      <div class="chk"></div>
+      <div class="exo-body">
+        <div class="exo-name">${e.name}</div>
+        <div class="exo-muscle">${e.muscle}</div>
+        <div class="exo-tags">
+          <span class="tag reps">${e.reps}</span>
+          <span class="tag freq">${e.freq}</span>
+          ${e.timer?`<span class="tag timer" onclick="event.stopPropagation();tOpen('${e.id}',${e.timer},'${e.name.replace(/'/g,"\\'")}')">${fmtT(e.timer)} ⏱️</span>`:''}
+        </div>
+      </div>
+      <button class="form-btn" onclick="event.stopPropagation();openForm('${e.id}')">Form</button>
+    </div>`});
+  document.getElementById('eList').innerHTML=h
+}
+
+function rProg(){
+  const c=today(),a=allEx(),done=a.filter(e=>c[e.id]).length,tot=a.length,pct=Math.round(done/tot*100);
+  document.getElementById('eProgFill').style.width=pct+'%';
+  document.getElementById('eProgLabel').innerHTML=`Aujourd'hui : <b>${done}/${tot}</b> exercices — ${pct}%`
+}
+
+function rStats(){
+  const d=load(),a=allEx(),tot=a.length;
+  let actDays=0;
+  Object.keys(d).forEach(k=>{if(a.filter(e=>d[k]?.[e.id]).length>=tot*.5)actDays++});
+  document.getElementById('sDays').textContent=actDays;
+
+  const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-((now.getDay()+6)%7));
+  let wd=0;for(let i=0;i<7;i++){const dd=new Date(ws);dd.setDate(ws.getDate()+i);
+    const k=dd.toISOString().split('T')[0];
+    if(d[k]&&a.filter(e=>d[k][e.id]).length>=tot*.5)wd++}
+  document.getElementById('sWeek').textContent=wd+'/7';
+
+  let st=0,ch=new Date();
+  while(true){const k=ch.toISOString().split('T')[0];
+    if(d[k]&&a.filter(e=>d[k][e.id]).length>=tot*.5){st++;ch.setDate(ch.getDate()-1);continue}
+    if(st===0&&k===todayK()){ch.setDate(ch.getDate()-1);continue}break}
+  document.getElementById('sStreak').textContent=st
+}
+
+/* ═══════════ ACTIONS ═══════════ */
+function toggle(id){const c=today();check(id,!c[id]);R()}
+function resetDay(){if(!confirm('Reset les exercices d\'aujourd\'hui ?'))return;const d=load();delete d[todayK()];save(d);R()}
+function fmtT(s){const m=Math.floor(s/60),sec=s%60;return m?m+'min'+(sec?sec+'s':''):sec+'s'}
+
+/* ═══════════ FORM MODAL ═══════════ */
+function openForm(id){
+  const e=allEx().find(x=>x.id===id);if(!e)return;
+  document.getElementById('mFormIn').innerHTML=`
+    <div class="modal-pill"></div>
+    <h3>${e.name}</h3>
+    <div class="m-muscle">${e.muscle} — ${e.zone}</div>
+    <div class="m-row">
+      <div class="m-detail"><div class="m-detail-label">Séries & reps</div><div class="m-detail-val">${e.reps}</div></div>
+      <div class="m-detail"><div class="m-detail-label">Fréquence</div><div class="m-detail-val">${e.freq}</div></div>
+    </div>
+    <div class="m-desc">${e.form}</div>
+    <div class="m-tip">💡 ${e.tip}</div>
+    <button class="modal-close" onclick="document.getElementById('mForm').classList.remove('show')">Compris</button>`;
+  document.getElementById('mForm').classList.add('show')
+}
+
+/* ═══════════ TIMER ═══════════ */
+let tInt=null,tRem=0,tRun=false,tTot=0;
+const CIRC=2*Math.PI*88;
+document.getElementById('tCircle').style.strokeDasharray=CIRC;
+
+function tOpen(id,sec,name){
+  tTot=sec;tRem=sec;tRun=false;clearInterval(tInt);
+  document.getElementById('tName').textContent=name;
+  document.getElementById('tGoBtn').textContent='Démarrer';
+  tUpdDisp();tUpdRing();
+  document.getElementById('mTimer').classList.add('show')
+}
+function tToggle(){
+  if(tRem<=0)return tStop();
+  if(tRun){clearInterval(tInt);tRun=false;document.getElementById('tGoBtn').textContent='Reprendre'}
+  else{tRun=true;document.getElementById('tGoBtn').textContent='Pause';
+    tInt=setInterval(()=>{tRem--;tUpdDisp();tUpdRing();
+      if(tRem<=0){clearInterval(tInt);tRun=false;
+        if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
+        document.getElementById('tGoBtn').textContent='Terminé ✓';
+        setTimeout(tStop,1200)}},1000)}
+}
+function tStop(){clearInterval(tInt);tRun=false;document.getElementById('mTimer').classList.remove('show')}
+function tUpdDisp(){
+  const m=Math.floor(tRem/60),s=tRem%60;
+  document.getElementById('tDisp').innerHTML=m+':<span>'+String(s).padStart(2,'0')+'</span>'
+}
+function tUpdRing(){
+  const pct=tTot>0?tRem/tTot:1;
+  document.getElementById('tCircle').style.strokeDashoffset=CIRC*(1-pct)
+}
+
+/* ═══════════ CALENDAR ═══════════ */
+function openCal(){
+  const d=load(),a=allEx(),tot=a.length,now=new Date(),y=now.getFullYear(),mo=now.getMonth();
+  const dim=new Date(y,mo+1,0).getDate(),fd=(new Date(y,mo,1).getDay()+6)%7;
+  const mn=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  let g=['L','M','M','J','V','S','D'].map(l=>`<div class="cal-dl">${l}</div>`).join('');
+  for(let i=0;i<fd;i++)g+='<div class="cal-c e"></div>';
+  for(let dd=1;dd<=dim;dd++){
+    const k=`${y}-${String(mo+1).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+    const isT=k===todayK();let cls='';
+    if(d[k]){const dn=a.filter(e=>d[k][e.id]).length;if(dn>=tot*.8)cls='full';else if(dn>0)cls='part'}
+    g+=`<div class="cal-c ${cls}${isT?' today':''}">${dd}</div>`}
+  document.getElementById('mCalIn').innerHTML=`<h3>📅 ${mn[mo]} ${y}</h3><div class="cal-grid">${g}</div>
+    <button class="cal-close" onclick="document.getElementById('mCal').classList.remove('show')">Fermer</button>`;
+  document.getElementById('mCal').classList.add('show')
+}
+
+/* ═══════════ AUTO SLOT + INIT ═══════════ */
+const h=new Date().getHours();
+if(h<12)slot='matin';else if(h<17)slot='midi';else slot='soir';
+R();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+let dp;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;const b=document.createElement("button");b.id="installBtn";b.textContent="Installer";b.style.cssText="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;z-index:200;box-shadow:0 4px 20px rgba(232,115,74,0.4)";b.onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;b.remove()};document.body.appendChild(b)});
+window.addEventListener("appinstalled",()=>{const b=document.getElementById("installBtn");if(b)b.remove()});
+</script>
+</body>
+</html>
