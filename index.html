@@ -11,7 +11,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#777;--dim:#444;--accent:#e8734a;--accent2:#e8734a22;--green:#4ade80;--blue:#60a5fa;--yellow:#fbbf24}
+:root{--bg:#111;--card:#1a1a1a;--border:#252525;--text:#eee;--sub:#888;--dim:#555;--accent:#e8734a;--accent2:#e8734a22;--green:#4ade80;--blue:#60a5fa;--yellow:#fbbf24}
 html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -20,9 +20,14 @@ input[type=number]{-moz-appearance:textfield}input::-webkit-outer-spin-button,in
 
 /* Nav */
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#111e;backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100}
-.nav button{flex:1;background:none;border:none;padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px}
-.nav button span:first-child{font-size:18px}
-.nav button span:last-child{font-size:9px;font-weight:600;letter-spacing:.3px}
+.nav button{flex:1;background:none;border:none;padding:8px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .2s}
+.nav button span:first-child{font-size:20px;transition:transform .2s}
+.nav button span:last-child{font-size:10px;font-weight:600;letter-spacing:.3px}
+.nav button:active span:first-child{transform:scale(1.2)}
+
+/* Interactions */
+button:active{transform:scale(.97)}
+input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(232,115,74,0.15)}
 
 /* Timer */
 .timer-bg{position:fixed;inset:0;z-index:999;background:#000e;backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center}
