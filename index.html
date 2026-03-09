@@ -258,7 +258,10 @@ const metaLine=[];
 if(ex.dw!=null)metaLine.push(ex.dw+"kg");
 metaLine.push("repos "+Math.floor(ex.rest/60)+"min"+(ex.rest%60?ex.rest%60+"s":""));
 if(pr)metaLine.push("PR "+pr.wt+"kg");
+if(pr&&pr.e1rm)metaLine.push("1RM \u2248"+pr.e1rm+"kg");
 card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--dim)",marginTop:"6px"}},metaLine.join(" \u00B7 ")));
+
+if(pr&&pr.suggest)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--green)",marginTop:"4px",fontWeight:"600"}},"\u2B06 Monter a "+pr.suggest+"kg"));
 
 if(ex.note)card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--yellow)",marginTop:"4px"}},ex.note));
 
@@ -342,7 +345,16 @@ setsWrap.appendChild(setCard)});
 // Add set button
 setsWrap.appendChild(h("button",{style:{background:"var(--bg)",border:"1px dashed var(--border)",borderRadius:"10px",color:"var(--dim)",padding:"10px",minWidth:"44px",fontSize:"18px",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center"},onClick:()=>{ex.sd.push({w:"",r:""});ren()}},"+"));
 
-card.appendChild(setsWrap);ct.appendChild(card)});
+card.appendChild(setsWrap);
+
+// Timer auto + surcharge suggestion
+const exBottom=h("div",{style:{padding:"0 12px 12px",display:"flex",gap:"6px",alignItems:"center"}});
+exBottom.appendChild(h("button",{style:{background:"var(--bg)",border:"1px solid var(--border)",borderRadius:"8px",color:"var(--accent)",padding:"6px 12px",fontSize:"12px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit",flex:"1"},onClick:()=>{ST=true;tStart(ex.rest)}},"\u23F1 "+Math.floor(ex.rest/60)+"m"+(ex.rest%60?ex.rest%60+"s":"")));
+const sug=db.pr[ex.id]?.suggest;
+if(sug)exBottom.appendChild(h("div",{style:{fontSize:"10px",color:"var(--green)",fontWeight:"600",flex:"1",textAlign:"right"}},"\u2B06 Monte a "+(sug)+"kg"));
+card.appendChild(exBottom);
+
+ct.appendChild(card)});
 
 // Cancel
 ct.appendChild(h("button",{style:{background:"none",border:"1px solid var(--border)",borderRadius:"10px",color:"var(--dim)",padding:"10px",width:"100%",marginTop:"4px",fontSize:"12px",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{CW=null;V="home";ren()}},"Annuler la seance"));
@@ -360,11 +372,22 @@ const r=last&&last[i]?String(last[i].r):"";return{w,r}})}
 function finishW(){
 if(!CW)return;
 const cl={dayId:CW.dayId,dayLabel:CW.dayLabel,date:CW.date,dur:Math.round((Date.now()-CW.t0)/60000),
-ex:CW.ex.map(ex=>({id:ex.id,name:ex.name,sets:ex.sd.filter(s=>s.w&&s.r).map(s=>({w:parseFloat(s.w),r:parseInt(s.r)}))})).filter(ex=>ex.sets.length>0)};
+ex:CW.ex.map(ex=>({id:ex.id,name:ex.name,sets:ex.sd.filter(s=>s.w&&s.r).map(s=>({w:parseFloat(s.w),r:parseInt(s.r)})),r:ex.r})).filter(ex=>ex.sets.length>0)};
 cl.ex.forEach(ex=>{
 const mW=Math.max(...ex.sets.map(s=>s.w)),mV=Math.max(...ex.sets.map(s=>s.w*s.r));
+// 1RM Epley
+const best1RM=Math.max(...ex.sets.map(s=>s.r===1?s.w:s.w*(1+s.r/30)));
 if(!db.pr[ex.id]||mW>(db.pr[ex.id].wt||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),wt:mW};
-if(!db.pr[ex.id]||mV>(db.pr[ex.id].vol||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),vol:mV}});
+if(!db.pr[ex.id]||mV>(db.pr[ex.id].vol||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),vol:mV};
+if(!db.pr[ex.id]||best1RM>(db.pr[ex.id].e1rm||0))db.pr[ex.id]={...(db.pr[ex.id]||{}),e1rm:Math.round(best1RM*10)/10};
+// Surcharge progressive : si toutes les series atteignent le haut de la fourchette de reps
+const repRange=ex.r;
+if(repRange&&repRange.includes("-")){
+const maxR=parseInt(repRange.split("-")[1]);
+const allMaxed=ex.sets.length>0&&ex.sets.every(s=>s.r>=maxR);
+if(allMaxed){const curW=Math.max(...ex.sets.map(s=>s.w));db.pr[ex.id].suggest=curW+2;}
+else{delete db.pr[ex.id]?.suggest;}
+}});
 db.w.push(cl);save();CW=null;V="home";ren()}
 
 // ── HISTORY ──
@@ -387,20 +410,23 @@ function rStats(){
 const ct=h("div",{style:{paddingTop:"20px"}});
 ct.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",marginBottom:"20px"}},"Stats"));
 
-// PRs
+// PRs with 1RM
 const allE=D.flatMap(d=>d.exercises);
 const prEntries=Object.entries(db.pr);
 if(prEntries.length){
 ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)",fontWeight:"600",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"10px"}},"Records personnels"));
 const grid=h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"6px",marginBottom:"24px"}});
 prEntries.forEach(([id,pr])=>{const exo=allE.find(e=>e.id===id);if(!exo)return;
-grid.appendChild(h("div",{style:{background:"var(--card)",borderRadius:"10px",padding:"10px 12px"}},
-h("div",{style:{fontSize:"11px",color:"var(--sub)",marginBottom:"4px"}},exo.name.slice(0,20)),
-h("div",{style:{fontSize:"20px",fontWeight:"700",color:"var(--accent)"}},pr.wt+"kg")))});
+const card=h("div",{style:{background:"var(--card)",borderRadius:"10px",padding:"10px 12px"}});
+card.appendChild(h("div",{style:{fontSize:"11px",color:"var(--sub)",marginBottom:"4px"}},exo.name.slice(0,20)));
+card.appendChild(h("div",{style:{fontSize:"20px",fontWeight:"700",color:"var(--accent)"}},pr.wt+"kg"));
+if(pr.e1rm)card.appendChild(h("div",{style:{fontSize:"10px",color:"var(--dim)",marginTop:"2px"}},"1RM \u2248 "+pr.e1rm+"kg"));
+if(pr.suggest)card.appendChild(h("div",{style:{fontSize:"10px",color:"var(--green)",marginTop:"2px"}},"\u2B06 Monte a "+pr.suggest+"kg"));
+grid.appendChild(card)});
 ct.appendChild(grid)}
 
-// Chart selector
-ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)",fontWeight:"600",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"10px"}},"Progression"));
+// Exercise selector
+ct.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)",fontWeight:"600",letterSpacing:"1px",textTransform:"uppercase",marginBottom:"10px"}},"Progression par exercice"));
 const btns=h("div",{style:{display:"flex",flexWrap:"wrap",gap:"4px",marginBottom:"16px"}});
 allE.forEach(ex=>{if(!gCD(ex.id).length)return;
 btns.appendChild(h("button",{style:{background:SE===ex.id?"var(--accent)":"var(--card)",color:SE===ex.id?"#fff":"var(--sub)",border:"none",borderRadius:"8px",padding:"6px 10px",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},onClick:()=>{SE=SE===ex.id?null:ex.id;ren()}},ex.name.slice(0,14)))});
@@ -409,15 +435,48 @@ ct.appendChild(btns);
 if(SE){
 const data=gCD(SE),exo=allE.find(e=>e.id===SE);
 if(data.length){
-const box=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"16px"}});
-box.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" — Charge"));
+const box=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"16px",marginBottom:"12px"}});
+box.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" \u2014 Charge max"));
 const mx=Math.max(...data.map(d=>d.wt)),mn=Math.min(...data.map(d=>d.wt)),rng=mx-mn||1;
 const bars=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"3px",height:"100px"}});
 data.forEach(d=>{const p=((d.wt-mn)/rng)*75+25;
 bars.appendChild(h("div",{style:{flex:"1",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",height:"100%"}},
 h("div",{style:{fontSize:"8px",color:"var(--sub)",marginBottom:"2px"}},d.wt+""),
 h("div",{style:{width:"100%",height:p+"%",background:"var(--accent)",borderRadius:"3px 3px 0 0",minHeight:"4px"}})))});
-box.appendChild(bars);ct.appendChild(box)}}
+box.appendChild(bars);ct.appendChild(box);
+
+// 1RM chart
+const box2=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"16px",marginBottom:"12px"}});
+box2.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" \u2014 1RM estime"));
+const rmData=db.w.filter(w=>w.ex.some(e=>e.id===SE)).map(w=>{
+const e=w.ex.find(x=>x.id===SE);
+const rm=Math.max(...e.sets.map(s=>s.r===1?s.w:s.w*(1+s.r/30)));
+return{d:fd(w.date),rm:Math.round(rm*10)/10}}).slice(-20);
+if(rmData.length>1){
+const mxR=Math.max(...rmData.map(d=>d.rm)),mnR=Math.min(...rmData.map(d=>d.rm)),rngR=mxR-mnR||1;
+const barsR=h("div",{style:{display:"flex",alignItems:"flex-end",gap:"3px",height:"80px"}});
+rmData.forEach(d=>{const p=((d.rm-mnR)/rngR)*75+25;
+barsR.appendChild(h("div",{style:{flex:"1",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-end",height:"100%"}},
+h("div",{style:{fontSize:"8px",color:"var(--sub)",marginBottom:"2px"}},d.rm+""),
+h("div",{style:{width:"100%",height:p+"%",background:"var(--blue)",borderRadius:"3px 3px 0 0",minHeight:"4px"}})))});
+box2.appendChild(barsR);ct.appendChild(box2)}
+
+// Historique detaille par exo
+const histBox=h("div",{style:{background:"var(--card)",borderRadius:"14px",padding:"16px"}});
+histBox.appendChild(h("div",{style:{fontSize:"13px",fontWeight:"600",marginBottom:"12px"}},exo.name+" \u2014 Historique"));
+const exHist=db.w.filter(w=>w.ex.some(e=>e.id===SE)).reverse().slice(0,10);
+if(exHist.length){
+exHist.forEach(w=>{
+const e=w.ex.find(x=>x.id===SE);
+const row=h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"1px solid var(--border)"}});
+row.appendChild(h("div",{style:{fontSize:"12px",color:"var(--sub)"}},fd(w.date)));
+const setsStr=e.sets.map(s=>s.w+"kg\u00D7"+s.r).join("  ");
+row.appendChild(h("div",{style:{fontSize:"12px",color:"var(--text)",fontWeight:"500"}},setsStr));
+const rm=Math.max(...e.sets.map(s=>s.r===1?s.w:s.w*(1+s.r/30)));
+row.appendChild(h("div",{style:{fontSize:"10px",color:"var(--blue)"}},Math.round(rm)+""));
+histBox.appendChild(row)})}
+else histBox.appendChild(h("div",{style:{color:"var(--dim)",fontSize:"12px"}},"Pas encore de donnees"));
+ct.appendChild(histBox)}}
 return ct}
 
 // ── NAV ──
