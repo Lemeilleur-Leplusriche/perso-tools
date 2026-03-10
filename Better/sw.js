@@ -1,4 +1,4 @@
-const C='glowup-v1',A=['/perso-tools/glowup/','/perso-tools/glowup/index.html'];
+const C='better-v1',A=['/perso-tools/Better/','/perso-tools/Better/index.html'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim()});
 self.addEventListener('fetch',e=>{
