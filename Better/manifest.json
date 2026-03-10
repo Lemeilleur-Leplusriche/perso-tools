@@ -1,8 +1,8 @@
 {
-  "name": "Glow Up Tracker",
-  "short_name": "GlowUp",
-  "start_url": "/perso-tools/glowup/",
-  "scope": "/perso-tools/glowup/",
+  "name": "Better",
+  "short_name": "Better",
+  "start_url": "/perso-tools/Better/",
+  "scope": "/perso-tools/Better/",
   "display": "standalone",
   "background_color": "#111",
   "theme_color": "#e8734a",
