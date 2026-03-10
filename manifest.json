@@ -1,14 +1,14 @@
 {
-  "name": "Habits",
-  "short_name": "Habits",
-  "start_url": "/perso-tools/Habits/",
-  "scope": "/perso-tools/Habits/",
+  "name": "Fitness Tracker PPL",
+  "short_name": "PPL",
+  "start_url": "/perso-tools/",
+  "scope": "/perso-tools/",
   "display": "standalone",
   "background_color": "#111",
   "theme_color": "#e8734a",
   "orientation": "portrait",
   "icons": [
-    { "src": "../Habits-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "../Habits-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "ppl-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "ppl-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
