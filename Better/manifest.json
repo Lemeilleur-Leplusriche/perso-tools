@@ -1,0 +1,14 @@
+{
+  "name": "Glow Up Tracker",
+  "short_name": "GlowUp",
+  "start_url": "/perso-tools/glowup/",
+  "scope": "/perso-tools/glowup/",
+  "display": "standalone",
+  "background_color": "#111",
+  "theme_color": "#e8734a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "../glowup-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "../glowup-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
