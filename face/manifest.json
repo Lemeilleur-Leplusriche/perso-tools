@@ -1,7 +1,6 @@
 {
   "name": "Face Sculpt",
   "short_name": "Face",
-  "description": "Programme d'entraînement facial quotidien",
   "start_url": "/perso-tools/face/",
   "scope": "/perso-tools/face/",
   "display": "standalone",
