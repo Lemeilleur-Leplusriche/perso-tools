@@ -5,5 +5,7 @@ self.addEventListener('fetch',e=>{
   if(e.request.url.includes('/hub/'))return;
   if(e.request.url.includes('/tester/'))return;
   if(e.request.url.includes('/face/'))return;
+  if(url.includes('/convo/'))return;
+  if(url.includes('/glowup/'))return;
   e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(C).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request)))
 });
