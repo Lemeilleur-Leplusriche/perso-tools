@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111111">
+<title>Glow Up</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="../glowup-icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#111;--card:#1a1a1a;--border:#252525;--accent:#e8734a;--text:#eee;--sub:#888;--dim:#555;--green:#4ade80;--blue:#60a5fa;--purple:#a78bfa;--yellow:#eab308;--pink:#f472b6;--r:14px}
+html{background:var(--bg)}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;max-width:500px;margin:0 auto;padding-bottom:90px;overscroll-behavior:none}
+button:active{transform:scale(.97)}
+input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(232,115,74,0.15)}
+
+/* ─── HEADER ─── */
+.hdr{padding:20px 16px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:50;border-bottom:1px solid var(--border)}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f472b6,var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px}
+.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.hdr h1 small{font-size:11px;color:var(--sub);font-weight:400;display:block;margin-top:1px}
+.streak-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
+.streak-pill em{font-style:normal;color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* ─── LEVEL BAR ─── */
+.level-wrap{padding:12px 16px 4px}
+.level-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.level-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px}
+.level-xp{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+.level-bar{height:6px;background:var(--card);border-radius:3px;overflow:hidden}
+.level-fill{height:100%;border-radius:3px;transition:width .5s ease}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:4px;padding:10px 16px 6px;overflow-x:auto;position:sticky;top:63px;background:var(--bg);z-index:40}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:8px 14px;border-radius:var(--r);border:1px solid var(--border);background:var(--card);text-align:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.tab.active{border-color:var(--accent)}
+.tab.active .tab-emoji{transform:scale(1.1)}
+.tab.complete::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);border-radius:0 0 4px 4px}
+.tab-emoji{font-size:16px;display:block;margin-bottom:2px;transition:transform .15s}
+.tab-sub{font-size:9px;color:var(--sub);font-weight:600;font-variant-numeric:tabular-nums}
+.tab.active .tab-sub{color:var(--accent)}
+
+/* ─── PROGRESS ─── */
+.prog-wrap{padding:6px 16px 0}
+.prog-bar{height:5px;background:var(--card);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--pink));border-radius:3px;transition:width .35s ease}
+.prog-label{font-size:12px;color:var(--sub);padding:6px 16px 0;text-align:center}
+.prog-label b{color:var(--accent)}
+
+/* ─── LIST ─── */
+.list{padding:6px 16px}
+.zone{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;padding:18px 0 8px;display:flex;align-items:center;gap:8px}
+.zone::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.exo{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:8px;display:flex;gap:12px;transition:all .15s ease;cursor:pointer;user-select:none;animation:fadeUp .3s ease both}
+.exo:active{transform:scale(.985)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.exo.done{border-color:rgba(74,222,128,.25);background:rgba(74,222,128,.04)}
+.exo.done .exo-name{opacity:.5;text-decoration:line-through}
+.exo.done .exo-sub{opacity:.4}
+.chk{width:24px;height:24px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s ease;margin-top:1px}
+.exo.done .chk{background:var(--green);border-color:var(--green)}
+.exo.done .chk::after{content:'✓';color:#111;font-size:13px;font-weight:700}
+.exo-body{flex:1;min-width:0}
+.exo-name{font-size:14px;font-weight:600;line-height:1.3;transition:all .15s}
+.exo-sub{font-size:12px;color:var(--sub);margin-top:2px}
+.exo-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:10px;padding:3px 8px;border-radius:6px;font-weight:500;white-space:nowrap}
+.tag.when{background:rgba(232,115,74,.1);color:var(--accent)}
+.tag.freq{background:rgba(255,255,255,.05);color:var(--sub)}
+.tag.impact{background:rgba(244,114,182,.1);color:var(--pink)}
+
+.form-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--sub);font-size:11px;font-family:inherit;cursor:pointer;flex-shrink:0;align-self:center;transition:all .15s;font-weight:500}
+.form-btn:active{border-color:var(--accent);color:var(--accent)}
+
+/* ─── BOTTOM BAR ─── */
+.bot{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:30;max-width:500px;margin:0 auto}
+.bot-btn{flex:1;padding:10px 8px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg);text-align:center;font-family:inherit;cursor:pointer;transition:all .15s}
+.bot-btn:active{background:var(--card)}
+.bot-val{font-size:18px;font-weight:700;display:block;margin-bottom:1px;color:var(--text);font-variant-numeric:tabular-nums}
+.bot-val.or{color:var(--accent)}
+.bot-lbl{font-size:10px;color:var(--sub);font-weight:500}
+
+/* ─── MODAL ─── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.show{opacity:1;pointer-events:auto}
+.modal{background:#1e1e1e;border-radius:20px 20px 0 0;padding:28px 20px 36px;width:100%;max-width:500px;max-height:75dvh;overflow-y:auto;transform:translateY(100%);transition:transform .25s ease}
+.modal-bg.show .modal{transform:translateY(0)}
+.modal-pill{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal h3{font-size:17px;font-weight:700}
+.modal .m-cat{font-size:13px;color:var(--pink);margin:2px 0 16px}
+.modal .m-row{display:flex;gap:12px;margin-bottom:14px}
+.modal .m-detail{flex:1;background:var(--bg);border-radius:10px;padding:10px 12px}
+.modal .m-detail-label{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.modal .m-detail-val{font-size:13px;font-weight:600}
+.modal .m-desc{font-size:13px;color:var(--sub);line-height:1.65;margin-bottom:14px}
+.modal .m-tip{background:rgba(244,114,182,.08);border-left:3px solid var(--pink);padding:10px 14px;border-radius:0 10px 10px 0;font-size:12px;color:var(--text);line-height:1.55;margin-bottom:20px}
+.modal-close{width:100%;padding:14px;border-radius:var(--r);background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
+.modal-close:active{opacity:.85}
+
+/* ─── CALENDAR ─── */
+.cal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .2s}
+.cal-bg.show{opacity:1;pointer-events:auto}
+.cal{background:#1e1e1e;border-radius:20px;padding:24px 20px;width:calc(100% - 32px);max-width:400px}
+.cal h3{font-size:16px;font-weight:700;text-align:center;margin-bottom:16px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.cal-dl{text-align:center;font-size:10px;color:var(--sub);padding:4px 0;font-weight:600}
+.cal-c{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+.cal-c.e{opacity:0}
+.cal-c.full{background:var(--accent);color:#fff;font-weight:600}
+.cal-c.part{background:rgba(232,115,74,.25);color:var(--accent);font-weight:600}
+.cal-c.today{box-shadow:inset 0 0 0 2px var(--accent)}
+.cal-close{width:100%;padding:12px;border-radius:var(--r);background:var(--border);color:var(--text);border:none;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-icon">✨</div>
+    <h1>Glow Up<small>Le playbook complet</small></h1>
+  </div>
+  <div class="streak-pill">🔥 <em id="sStreak">0</em>j</div>
+</div>
+
+<div class="level-wrap" id="levelWrap"></div>
+<div class="tabs" id="eTabs"></div>
+<div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="eProgFill"></div></div></div>
+<div class="prog-label" id="eProgLabel"></div>
+<div class="list" id="eList"></div>
+
+<div class="bot">
+  <button class="bot-btn" onclick="openCal()"><span class="bot-val or" id="sDays">0</span><span class="bot-lbl">jours actifs</span></button>
+  <button class="bot-btn" onclick="resetDay()"><span class="bot-val">↺</span><span class="bot-lbl">reset jour</span></button>
+  <button class="bot-btn" onclick="openCal()"><span class="bot-val" id="sWeek">0/7</span><span class="bot-lbl">cette semaine</span></button>
+</div>
+
+<div class="modal-bg" id="mForm" onclick="this===event.target&&this.classList.remove('show')"><div class="modal" id="mFormIn"></div></div>
+<div class="cal-bg" id="mCal" onclick="this===event.target&&this.classList.remove('show')"><div class="cal" id="mCalIn"></div></div>
+
+<script>
+const CATS=[
+{id:'skin',emoji:'🧴',name:'Skincare',color:'var(--blue)'},
+{id:'face',emoji:'🗿',name:'Visage',color:'var(--accent)'},
+{id:'body',emoji:'💪',name:'Corps',color:'var(--green)'},
+{id:'style',emoji:'👔',name:'Style',color:'var(--purple)'},
+{id:'posture',emoji:'🧘',name:'Posture',color:'var(--yellow)'},
+{id:'hygiene',emoji:'✨',name:'Hygiène',color:'var(--pink)'},
+{id:'sleep',emoji:'😴',name:'Sommeil',color:'var(--blue)'},
+];
+
+const EX={
+skin:[
+  {id:'spf',zone:'Matin',name:'SPF 50',sub:'Appliquer écran solaire',when:'Matin',freq:'Tous les jours',impact:'Très élevé',
+   form:'Appliquer 2 doigts de crème SPF50 sur le visage, cou, oreilles. Même en hiver, même par temps couvert. Réappliquer toutes les 2h si exposition.',
+   tip:'Le soleil cause 80% du vieillissement cutané. Sans SPF, tout le reste de ta skincare est inutile. C\'est le produit le plus important, point.'},
+  {id:'cleanseAM',zone:'Matin',name:'Nettoyant doux',sub:'Eau micellaire ou cleanser',when:'Matin',freq:'Tous les jours',impact:'Moyen',
+   form:'Nettoie le visage avec un cleanser doux (CeraVe, La Roche-Posay). Pas de savon. Eau tiède, pas chaude.',
+   tip:'Le matin c\'est léger — tu enlèves le sébum de la nuit, pas le maquillage de la veille.'},
+  {id:'caffeine',zone:'Matin',name:'Sérum caféine yeux',sub:'Anti-poches + anti-cernes',when:'Matin',freq:'Tous les jours',impact:'Moyen',
+   form:'Tapote 1 goutte sous chaque œil avec l\'annulaire. Du coin interne vers l\'externe. Ne pas frotter.',
+   tip:'La caféine resserre les vaisseaux → dépuff immédiat. The Ordinary Caffeine Solution 5% = rapport qualité/prix imbattable.'},
+  {id:'moistAM',zone:'Matin',name:'Hydratant léger',sub:'Gel-crème ou lotion',when:'Matin',freq:'Tous les jours',impact:'Élevé',
+   form:'Applique sur visage et cou. Attends 2-3 min avant le SPF pour que ça pénètre.',
+   tip:'Peau hydratée = peau qui vieillit moins vite. CeraVe Lotion ou Neutrogena Hydro Boost.'},
+  {id:'cleansePM',zone:'Soir',name:'Double nettoyage',sub:'Huile + cleanser',when:'Soir',freq:'Tous les jours',impact:'Élevé',
+   form:'1) Huile démaquillante ou baume (même sans maquillage — pour le SPF). 2) Cleanser doux. Eau tiède.',
+   tip:'Le double nettoyage enlève le SPF, la pollution, le sébum. Un simple cleanser ne suffit pas le soir.'},
+  {id:'tretinoin',zone:'Soir',name:'Trétinoïne',sub:'0.025% → 0.05% progressive',when:'Soir',freq:'3x/semaine',impact:'Très élevé',
+   form:'Sur peau SÈCHE, 1 grain de riz. Évite contour des yeux et coins du nez. Commence 3x/semaine, monte progressivement. Toujours avec SPF le lendemain.',
+   tip:'Le seul actif prouvé scientifiquement qui restructure la peau, boost le collagène, réduit rides et taches. Prescription obligatoire. Résultats à 3-6 mois. Game changer absolu.'},
+  {id:'niacin',zone:'Soir',name:'Niacinamide 10%',sub:'Texture + pores + éclat',when:'Soir (jours sans trétinoïne)',freq:'4x/semaine',impact:'Moyen',
+   form:'3-4 gouttes, applique sur tout le visage. Utiliser les soirs sans trétinoïne pour éviter l\'irritation.',
+   tip:'Resserre les pores, unifie le teint, contrôle le sébum. The Ordinary Niacinamide 10% + Zinc 1%.'},
+  {id:'moistPM',zone:'Soir',name:'Hydratant riche soir',sub:'Crème céramides',when:'Soir',freq:'Tous les jours',impact:'Élevé',
+   form:'Crème plus riche que le matin (CeraVe Crème Hydratante). Visage et cou. La peau se répare la nuit, elle a besoin de ressources.',
+   tip:'Les céramides renforcent la barrière cutanée. Si ta peau tiraille, c\'est que ta barrière est cassée → plus d\'hydratant, moins d\'actifs.'},
+  {id:'dermaroll',zone:'Hebdo',name:'Dermaroller 0.5mm',sub:'Stimulation collagène',when:'1x/semaine (soir)',freq:'1x/semaine',impact:'Élevé',
+   form:'Peau propre. Roule 4-6 passages dans chaque direction (horizontal, vertical, diagonal) sans appuyer fort. Désinfecte le roller avant/après. Applique sérum après. Pas de trétinoïne le même soir.',
+   tip:'Crée des micro-perforations → peau produit plus de collagène pour réparer. Résultats à 6-8 semaines. Ne dépasse PAS 0.5mm sans supervision.'},
+],
+face:[
+  {id:'mewing',zone:'Posture faciale',name:'Mewing',sub:'Langue au palais 24/7',when:'Permanent',freq:'24/7',impact:'Très élevé',
+   form:'Langue ENTIÈRE collée au palais (pas juste la pointe). Dents légèrement serrées, lèvres fermées. Respire par le nez.',
+   tip:'Restructure la mâchoire en 3-6 mois. Le fondamental absolu.'},
+  {id:'guasha',zone:'Matin',name:'Gua Sha + massage lymphatique',sub:'Dépuff + drainage',when:'Matin',freq:'Tous les jours',impact:'Très élevé',
+   form:'Sérum ou huile sur peau. Gua Sha en pierre (jade/quartz rose). Mouvements du CENTRE vers les OREILLES, puis des oreilles vers le COU. Toujours vers le bas sur le cou. 5 passages par zone. Légère pression.',
+   tip:'Le drainage lymphatique c\'est le truc qui fait la plus grosse différence visible immédiatement. Visage dépuffé, jawline plus dessinée dès le premier jour.'},
+  {id:'froid',zone:'Matin',name:'Eau froide / ice rolling',sub:'Vasoconstriction + tonus',when:'Matin',freq:'Tous les jours',impact:'Élevé',
+   form:'Splash d\'eau froide 30s sur le visage OU ice roller 2 min. Mouvements de bas en haut, du centre vers l\'extérieur.',
+   tip:'Resserre les pores, réduit les poches, donne un teint plus vif instantanément. Le combo froid + gua sha le matin = transformation visible.'},
+  {id:'chewing',zone:'Mâchoire',name:'Chewing-gum dur',sub:'Falim ou mastic, 3x5min',when:'Matin',freq:'Tous les jours',impact:'Élevé',
+   form:'Mâche un chewing-gum dur (Falim, mastic) en alternant les côtés. Mouvements lents et puissants, pas rapides.',
+   tip:'Résultats visibles en 4-8 semaines. Développe le masséter → jawline carrée et définie.'},
+  {id:'neckcurl',zone:'Mâchoire',name:'Neck curls',sub:'3×15-20 reps',when:'3x/semaine',freq:'3x/semaine',impact:'Élevé',
+   form:'Allongé, tête dans le vide. Remonte la tête en contractant le cou. Mouvement lent et contrôlé.',
+   tip:'Un cou musclé encadre le visage et te fait passer de "il va à la salle" à "il est athlétique".'},
+  {id:'minox',zone:'Barbe',name:'Minoxidil barbe',sub:'5% matin + soir',when:'Matin + Soir',freq:'Tous les jours',impact:'Très élevé',
+   form:'Appliquer 1ml de Minoxidil 5% sur les zones de barbe clairsemées. Matin ET soir. Laisser sécher 4h avant de laver. Hydrater ensuite.',
+   tip:'6-12 mois pour résultats complets. Les poils deviennent permanents après ~1 an. Si ta barbe est déjà pleine, skip.'},
+],
+body:[
+  {id:'muscu',zone:'Training',name:'Séance PPL',sub:'Push / Pull / Legs x2',when:'6j/semaine',freq:'6j/semaine',impact:'Très élevé',
+   form:'Suis ton programme PPL. Surcharge progressive. Log tes poids. Le volume et la constance > l\'intensité d\'une seule séance.',
+   tip:'À 82kg 1m80, le V-taper est ton objectif : priorise lateral raises (épaules), tractions larges (dos), et taille fine.'},
+  {id:'etirements',zone:'Training',name:'Étirements post-muscu',sub:'5 min routine ciblée',when:'Après chaque séance',freq:'6j/semaine',impact:'Élevé',
+   form:'Haut (pec porte, épaule croisée, lat stretch — insiste côté gauche +10s). Dos (cat-cow, rotation spinale). Bas (fléchisseur hanche, pigeon).',
+   tip:'Prévient les blessures, améliore la récup, corrige les déséquilibres de la muscu. 5 min après chaque séance = investissement énorme.'},
+  {id:'avantbras',zone:'Training',name:'Farmer walks + wrist curls',sub:'Avant-bras visibles en t-shirt',when:'2-3x/semaine',freq:'3x/semaine',impact:'Moyen',
+   form:'Farmer walks : prends les haltères les plus lourds que tu peux tenir, marche 30-40s. Wrist curls : 3x15-20 reps en supination et pronation.',
+   tip:'C\'est la seule partie visible en T-shirt avec les bras. Des avant-bras développés = perception de force immédiate.'},
+  {id:'bodyfat',zone:'Nutrition',name:'Déficit / maintenance contrôlé',sub:'Objectif <13% BF',when:'Quotidien',freq:'Tous les jours',impact:'Très élevé',
+   form:'Track tes calories. En lean bulk ~2800kcal, en cut ~2200-2400. Le bodyfat c\'est ce qui révèle la jawline, les veines, la structure.',
+   tip:'En dessous de 13% de bodyfat, la jawline, les veines des avant-bras et la structure faciale se révèlent. C\'est le facteur n°1 que les gens sous-estiment.'},
+  {id:'sel',zone:'Nutrition',name:'Contrôler le sel au dîner',sub:'Réduire sodium le soir',when:'Soir',freq:'Tous les jours',impact:'Élevé',
+   form:'Le dîner low-sodium fait plus de différence que réduire globalement. Pas de plats transformés, chips, fromage le soir. Cuisine simple.',
+   tip:'Le sel au dîner = rétention d\'eau le matin = visage puffé. Réduire spécifiquement le soir c\'est le hack le plus sous-coté.'},
+  {id:'eau',zone:'Nutrition',name:'2.5-3L d\'eau',sub:'Ne jamais couper l\'eau',when:'Toute la journée',freq:'Tous les jours',impact:'Élevé',
+   form:'Boire régulièrement tout au long de la journée. Le corps retient PLUS d\'eau quand il est déshydraté (paradoxe).',
+   tip:'Pas de sodas, pas de jus. Eau plate et thé. L\'hydratation impacte la peau, la rétention d\'eau faciale, et la perf en salle.'},
+],
+style:[
+  {id:'fit',zone:'Vêtements',name:'Outfit check fit',sub:'Épaules alignées, slim pas serré',when:'Matin',freq:'Tous les jours',impact:'Très élevé',
+   form:'Vérifie : les épaules du vêtement tombent sur TES épaules. Pas de tissu qui baille au torse. Slim, pas moulant. Montre le V-taper.',
+   tip:'Fit > marque. Un T-shirt à 15€ bien coupé bat un T-shirt de marque large. Si t\'hésites entre 2 tailles, prends la plus petite.'},
+  {id:'palette',zone:'Vêtements',name:'Max 3 couleurs',sub:'Noir, blanc, navy, olive, terre',when:'Matin',freq:'Tous les jours',impact:'Élevé',
+   form:'Palette resserrée : noir, blanc, gris, bleu marine, olive, marron. Max 3 couleurs par tenue. Les couleurs terre vont bien avec les peaux mates.',
+   tip:'La cohérence > l\'originalité. Les mecs les mieux habillés portent des trucs simples mais parfaitement coordonnés.'},
+  {id:'shoes',zone:'Détails',name:'Chaussures propres',sub:'Check et clean',when:'Avant de sortir',freq:'Tous les jours',impact:'Élevé',
+   form:'Vérifie l\'état de tes chaussures. Nettoie si nécessaire. 2-3 paires propres et de qualité > 10 paires moyennes.',
+   tip:'Premier truc qu\'on regarde inconsciemment. Des chaussures sales ruinent une tenue entière.'},
+  {id:'accessoire',zone:'Détails',name:'Accessoire discret',sub:'Montre ou bracelet simple',when:'Matin',freq:'Quand tu sors',impact:'Moyen',
+   form:'Un seul accessoire. Montre sobre ou bracelet simple. Pas de superposition de chaînes et bracelets.',
+   tip:'Un accessoire bien choisi = intention. Trop d\'accessoires = essaie trop fort.'},
+  {id:'coiffure',zone:'Détails',name:'Coiffure en place',sub:'Produit mat, pas gel',when:'Matin',freq:'Tous les jours',impact:'Très élevé',
+   form:'Cheveux propres et coiffés. Produit mat (clay, pâte) pour un look naturel. Barbier toutes les 3-4 semaines, fade ou taper.',
+   tip:'Une bonne coupe entretenue change plus un visage que n\'importe quel soin. Investis dans un bon barbier, pas un coiffeur random.'},
+],
+posture:[
+  {id:'epaules',zone:'Standing',name:'Épaules arrière et basses',sub:'Omoplates dans les poches',when:'Permanent',freq:'24/7',impact:'Très élevé',
+   form:'Pense "mettre tes omoplates dans tes poches arrière". Pas tirées en arrière de force — juste basses et en place. Le sternum légèrement relevé.',
+   tip:'La posture est la première chose qu\'on voit, avant le visage, avant les vêtements. Épaules en avant = pas confiant.'},
+  {id:'menton',zone:'Standing',name:'Menton parallèle au sol',sub:'Pas vers le bas',when:'Permanent',freq:'24/7',impact:'Élevé',
+   form:'Regarde à l\'horizon, pas tes pieds. Menton parallèle au sol. Imagine un fil qui tire le sommet de ton crâne vers le haut.',
+   tip:'La tête penchée vers le bas = soumis. Menton relevé = confiant, alerte, présent.'},
+  {id:'place',zone:'Sitting',name:'Prendre de la place',sub:'Pieds largeur épaules, bras détendus',when:'En social',freq:'Situations sociales',impact:'Élevé',
+   form:'Assis : pieds au sol, écartés. Bras sur les accoudoirs ou détendus, pas croisés. Debout : pieds largeur épaules. Occupe ton espace.',
+   tip:'Le langage corporel ouvert = attractif et confiant. Les bras croisés, les jambes serrées = fermé, défensif.'},
+  {id:'contact',zone:'Social',name:'Contact visuel détendu',sub:'70% écoute, 50% parole',when:'Conversations',freq:'Toujours',impact:'Très élevé',
+   form:'Regarde les gens dans les yeux 70% du temps quand ils parlent, 50% quand tu parles. Pas fixe — détendu, naturel. Regarde entre les yeux si c\'est plus confortable.',
+   tip:'Le contact visuel est le signal n°1 de confiance et d\'attractivité. Trop = agressif. Pas assez = pas intéressé/pas confiant.'},
+  {id:'voix',zone:'Social',name:'Parler lentement',sub:'Pas besoin de remplir les silences',when:'Conversations',freq:'Toujours',impact:'Élevé',
+   form:'Ralentis ton débit de 20%. Fais des pauses. Les silences ne sont pas gênants, c\'est toi qui les rends gênants.',
+   tip:'Les mecs beaux/confiants parlent plus lentement. Ça transmet que tu n\'as pas peur qu\'on te coupe, que ton temps a de la valeur.'},
+],
+hygiene:[
+  {id:'parfum',zone:'Fragrance',name:'Parfum — 2 sprays max',sub:'Poignets + cou',when:'Avant de sortir',freq:'Quand tu sors',impact:'Très élevé',
+   form:'2 sprays : 1 sur un poignet (frotte pas), 1 sur le cou. Pas plus. Un parfum doit se découvrir, pas s\'imposer.',
+   tip:'Bleu de Chanel (safe), Dior Sauvage Elixir (puissant), YSL Y EDP (jeune). Un niche pour sortir du lot. Le parfum c\'est le souvenir invisible.'},
+  {id:'dents',zone:'Sourire',name:'Dents — brossage + fil',sub:'Blancheur + hygiène',when:'Matin + Soir',freq:'2x/jour',impact:'Très élevé',
+   form:'2 min brossage matin + soir. Fil dentaire le soir. Bandes blanchissantes 1x/semaine ou blanchiment dentiste 1x/an.',
+   tip:'Des dents blanches et alignées c\'est le deuxième truc qu\'on remarque après les yeux. Le ROI est gigantesque.'},
+  {id:'ongles',zone:'Détails',name:'Ongles coupés et propres',sub:'Check rapide',when:'2x/semaine',freq:'2x/semaine',impact:'Moyen',
+   form:'Coupe courts, lime les bords. Vérifie qu\'il n\'y a pas de saleté. 30 secondes qui font la différence.',
+   tip:'Des ongles sales ou longs chez un mec = deal breaker silencieux. Personne te le dira mais tout le monde le remarque.'},
+  {id:'peauCorps',zone:'Corps',name:'Hydrater corps après douche',sub:'Céramides / lotion',when:'Après douche',freq:'Tous les jours',impact:'Moyen',
+   form:'Applique lotion ou crème céramides sur tout le corps, surtout coudes, genoux, mains. Peau encore légèrement humide = meilleure absorption.',
+   tip:'La peau sèche vieillit plus vite et a l\'air négligée. 1 minute après la douche, grosse différence.'},
+  {id:'sourcils',zone:'Détails',name:'Sourcils structurés',sub:'Entretien entre les rdv',when:'1x/semaine check',freq:'1x/semaine',impact:'Élevé',
+   form:'Élimine les poils entre les sourcils et ceux qui dépassent nettement la ligne. Barbier/pro toutes les 4-6 semaines pour la forme de base.',
+   tip:'Des sourcils bien dessinés changent plus un visage qu\'on le pense. Ça structure le regard entier.'},
+],
+sleep:[
+  {id:'heures',zone:'Durée',name:'7-8h de sommeil',sub:'Non-négociable',when:'Nuit',freq:'Tous les jours',impact:'Très élevé',
+   form:'Au lit 8h avant le réveil. Alarme de coucher. Le sommeil affecte : récup muscu, cernes, peau, hormones, rétention d\'eau faciale — TOUT.',
+   tip:'Dormir <7h augmente le cortisol, stocke la graisse abdominale, crée des cernes, ralentit la récup. C\'est le cheat code gratuit.'},
+  {id:'dos',zone:'Position',name:'Dormir sur le dos',sub:'Tête légèrement surélevée',when:'Nuit',freq:'Tous les jours',impact:'Élevé',
+   form:'Oreiller adapté, tête légèrement plus haute que le corps. Dormir sur le côté/ventre crée des plis faciaux asymétriques avec le temps.',
+   tip:'Le facteur le plus sous-estimé pour le puffiness matinal. L\'oreiller fait la gravité → drainage naturel pendant le sommeil.'},
+  {id:'ecran',zone:'Routine soir',name:'Pas d\'écran 30 min avant',sub:'Lumière bleue = mauvais sommeil',when:'Soir',freq:'Tous les jours',impact:'Élevé',
+   form:'Pose le téléphone 30 min avant de dormir. Mode nuit sur tous les écrans dès 21h. Lis un livre, étire-toi, médite.',
+   tip:'La lumière bleue bloque la mélatonine → endormissement plus lent → moins de sommeil profond → visage puffé le matin.'},
+  {id:'temp',zone:'Environnement',name:'Chambre 18-19°C',sub:'Fraîche et noire',when:'Nuit',freq:'Tous les jours',impact:'Moyen',
+   form:'Température idéale : 18-19°C. Blackout total (rideaux opaques ou masque). Le corps a besoin de refroidir pour s\'endormir.',
+   tip:'Chaque degré au-dessus de 19° réduit la qualité du sommeil profond. Investis dans de bons rideaux occultants.'},
+],
+};
+
+const LEVELS=[
+  {n:'Normie',min:0,color:'var(--sub)'},
+  {n:'Conscient',min:15,color:'var(--blue)'},
+  {n:'Discipliné',min:50,color:'var(--green)'},
+  {n:'Glow Up',min:120,color:'var(--yellow)'},
+  {n:'Top 10%',min:250,color:'var(--accent)'},
+  {n:'Top 1%',min:500,color:'var(--pink)'},
+  {n:'Légende',min:1000,color:'var(--purple)'},
+];
+
+const LS='glowup-data';
+const todayK=()=>new Date().toISOString().split('T')[0];
+let cat='skin';
+
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS))||{}}catch{return{}}};
+const save=d=>localStorage.setItem(LS,JSON.stringify(d));
+const today=()=>load()[todayK()]||{};
+const check=(id,v)=>{const d=load(),k=todayK();if(!d[k])d[k]={};d[k][id]=v;save(d)};
+const allEx=()=>Object.values(EX).flat();
+
+function getXP(){
+  const d=load(),a=allEx(),tot=a.length;
+  let xp=0;
+  Object.keys(d).forEach(k=>{if(typeof d[k]==='object'){const done=a.filter(e=>d[k]?.[e.id]).length;xp+=done}});
+  return xp;
+}
+
+function getLevel(xp){
+  let lv=LEVELS[0];
+  for(const l of LEVELS)if(xp>=l.min)lv=l;
+  const idx=LEVELS.indexOf(lv);
+  const next=LEVELS[idx+1];
+  return{...lv,xp,next,idx};
+}
+
+/* ═══════════ RENDER ═══════════ */
+function R(){rLevel();rTabs();rList();rProg();rStats()}
+
+function rLevel(){
+  const xp=getXP(),lv=getLevel(xp);
+  const pct=lv.next?Math.min((xp-lv.min)/(lv.next.min-lv.min),1):1;
+  const nextLabel=lv.next?`${xp}/${lv.next.min} XP`:`${xp} XP — MAX`;
+  document.getElementById("levelWrap").innerHTML=`
+    <div class="level-top"><span class="level-tag" style="background:${lv.color}20;color:${lv.color}">${lv.n}</span><span class="level-xp">${nextLabel}</span></div>
+    <div class="level-bar"><div class="level-fill" style="width:${Math.round(pct*100)}%;background:${lv.color}"></div></div>`;
+}
+
+function rTabs(){
+  const c=today();
+  document.getElementById("eTabs").innerHTML=CATS.map(ct=>{
+    const exs=EX[ct.id]||[],done=exs.filter(e=>c[e.id]).length,tot=exs.length,full=done===tot&&tot>0;
+    return`<div class="tab${ct.id===cat?' active':''}${full?' complete':''}" onclick="cat='${ct.id}';R()">
+      <span class="tab-emoji">${ct.emoji}</span>
+      <div class="tab-sub">${full?'✓':done+'/'+tot}</div>
+    </div>`}).join('');
+}
+
+function rList(){
+  const c=today(),exs=EX[cat]||[];
+  let h='',lz='';
+  exs.forEach((e,i)=>{
+    if(e.zone!==lz){
+      const catInfo=CATS.find(x=>x.id===cat);
+      h+=`<div class="zone" style="color:${catInfo?.color||'var(--accent)'}">${e.zone}</div>`;
+      lz=e.zone;
+    }
+    const d=c[e.id]?'done':'';
+    h+=`<div class="exo ${d}" style="animation-delay:${i*40}ms" onclick="toggle('${e.id}')">
+      <div class="chk"></div>
+      <div class="exo-body">
+        <div class="exo-name">${e.name}</div>
+        <div class="exo-sub">${e.sub}</div>
+        <div class="exo-tags">
+          <span class="tag when">${e.when}</span>
+          <span class="tag freq">${e.freq}</span>
+          <span class="tag impact">⚡ ${e.impact}</span>
+        </div>
+      </div>
+      <button class="form-btn" onclick="event.stopPropagation();openForm('${e.id}')">Guide</button>
+    </div>`});
+  document.getElementById("eList").innerHTML=h;
+}
+
+function rProg(){
+  const c=today(),a=allEx(),done=a.filter(e=>c[e.id]).length,tot=a.length,pct=Math.round(done/tot*100);
+  document.getElementById("eProgFill").style.width=pct+'%';
+  document.getElementById("eProgLabel").innerHTML=`Aujourd'hui : <b>${done}/${tot}</b> — ${pct}%`;
+}
+
+function rStats(){
+  const d=load(),a=allEx(),tot=a.length;
+  let actDays=0;
+  Object.keys(d).forEach(k=>{if(typeof d[k]==='object'&&a.filter(e=>d[k]?.[e.id]).length>=tot*.2)actDays++});
+  document.getElementById("sDays").textContent=actDays;
+
+  const now=new Date(),ws=new Date(now);ws.setDate(now.getDate()-((now.getDay()+6)%7));
+  let wd=0;for(let i=0;i<7;i++){const dd=new Date(ws);dd.setDate(ws.getDate()+i);
+    const k=dd.toISOString().split('T')[0];
+    if(d[k]&&typeof d[k]==='object'&&a.filter(e=>d[k][e.id]).length>=tot*.2)wd++}
+  document.getElementById("sWeek").textContent=wd+'/7';
+
+  let st=0,ch=new Date();
+  while(true){const k=ch.toISOString().split('T')[0];
+    if(d[k]&&typeof d[k]==='object'&&a.filter(e=>d[k][e.id]).length>=tot*.2){st++;ch.setDate(ch.getDate()-1);continue}
+    if(st===0&&k===todayK()){ch.setDate(ch.getDate()-1);continue}break}
+  document.getElementById("sStreak").textContent=st;
+}
+
+/* ═══════════ ACTIONS ═══════════ */
+function toggle(id){
+  const c=today();check(id,!c[id]);
+  try{navigator.vibrate(c[id]?[15]:[30])}catch(e){}
+  R();
+}
+function resetDay(){
+  if(!confirm('Reset tout aujourd\'hui ?'))return;
+  const d=load();delete d[todayK()];save(d);R();
+}
+
+/* ═══════════ FORM MODAL ═══════════ */
+function openForm(id){
+  const e=allEx().find(x=>x.id===id);if(!e)return;
+  const catInfo=CATS.find(c=>EX[c.id]?.includes(e));
+  document.getElementById("mFormIn").innerHTML=`
+    <div class="modal-pill"></div>
+    <h3>${e.name}</h3>
+    <div class="m-cat">${catInfo?.emoji||''} ${catInfo?.name||''} — ${e.zone}</div>
+    <div class="m-row">
+      <div class="m-detail"><div class="m-detail-label">Quand</div><div class="m-detail-val">${e.when}</div></div>
+      <div class="m-detail"><div class="m-detail-label">Fréquence</div><div class="m-detail-val">${e.freq}</div></div>
+      <div class="m-detail"><div class="m-detail-label">Impact</div><div class="m-detail-val">⚡ ${e.impact}</div></div>
+    </div>
+    <div class="m-desc">${e.form}</div>
+    <div class="m-tip">💡 ${e.tip}</div>
+    <button class="modal-close" onclick="document.getElementById('mForm').classList.remove('show')">Compris</button>`;
+  document.getElementById("mForm").classList.add('show');
+}
+
+/* ═══════════ CALENDAR ═══════════ */
+function openCal(){
+  const d=load(),a=allEx(),tot=a.length,now=new Date(),y=now.getFullYear(),mo=now.getMonth();
+  const dim=new Date(y,mo+1,0).getDate(),fd=(new Date(y,mo,1).getDay()+6)%7;
+  const mn=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  let g=['L','M','M','J','V','S','D'].map(l=>`<div class="cal-dl">${l}</div>`).join('');
+  for(let i=0;i<fd;i++)g+='<div class="cal-c e"></div>';
+  for(let dd=1;dd<=dim;dd++){
+    const k=`${y}-${String(mo+1).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+    const isT=k===todayK();let cls='';
+    if(d[k]&&typeof d[k]==='object'){const dn=a.filter(e=>d[k][e.id]).length;if(dn>=tot*.5)cls='full';else if(dn>0)cls='part'}
+    g+=`<div class="cal-c ${cls}${isT?' today':''}">${dd}</div>`}
+  document.getElementById("mCalIn").innerHTML=`<h3>📅 ${mn[mo]} ${y}</h3><div class="cal-grid">${g}</div>
+    <button class="cal-close" onclick="document.getElementById('mCal').classList.remove('show')">Fermer</button>`;
+  document.getElementById("mCal").classList.add('show');
+}
+
+/* ═══════════ INIT ═══════════ */
+R();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+let dp;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dp=e;const b=document.createElement("button");b.id="installBtn";b.textContent="Installer";b.style.cssText="position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:14px;padding:12px 28px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;z-index:200;box-shadow:0 4px 20px rgba(232,115,74,0.4)";b.onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;b.remove()};document.body.appendChild(b)});
+window.addEventListener("appinstalled",()=>{const b=document.getElementById("installBtn");if(b)b.remove()});
+</script>
+</body>
+</html>
