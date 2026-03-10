@@ -1,0 +1,15 @@
+{
+  "name": "Face Sculpt",
+  "short_name": "Face",
+  "description": "Programme d'entraînement facial quotidien",
+  "start_url": "/perso-tools/face/",
+  "scope": "/perso-tools/face/",
+  "display": "standalone",
+  "background_color": "#111",
+  "theme_color": "#e8734a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "../face-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "../face-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
