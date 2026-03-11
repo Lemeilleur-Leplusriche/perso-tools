@@ -211,7 +211,7 @@ input:focus{border-color:var(--accent)!important;box-shadow:0 0 0 2px rgba(232,1
 <div class="add-modal-bg" id="addTaskModal" onclick="if(event.target===this)closeAddTask()"><div class="add-modal" id="addTaskModalIn"></div></div>
 <script>
 const DEF_C=[{id:"sport",emoji:"\uD83C\uDFCB\uFE0F",label:"Muscu / Sport"},{id:"nutrition",emoji:"\uD83C\uDF57",label:"Bien manger"},{id:"dev",emoji:"\uD83D\uDCBB",label:"Dev GONI"},{id:"sleep7h",emoji:"\uD83D\uDE34",label:"7h+ sommeil"},{id:"social",emoji:"\uD83E\uDD1D",label:"Voir du monde"},{id:"noscroll",emoji:"\uD83D\uDCF5",label:"Pas de scroll"},{id:"water",emoji:"\uD83D\uDCA7",label:"2L+ eau"},{id:"learn",emoji:"\uD83D\uDCDA",label:"Lire / apprendre"}];
-const HK="dailyhub-habits",TC=2600,TP=160,GK="dailyhub-gratitudes",TK="dailyhub-todos";
+const HK="dailyhub-habits",TC=2600,TP=160,GK="dailyhub-gratitudes",TK="dailyhub-todos-v3";
 function gC(){try{const r=localStorage.getItem(HK);return r?JSON.parse(r):DEF_C}catch(e){return DEF_C}}
 function sC(h){localStorage.setItem(HK,JSON.stringify(h))}
 function gG(){try{return JSON.parse(localStorage.getItem(GK))||{}}catch(e){return{}}}
@@ -271,8 +271,8 @@ const DEF_TODOS=[
 {id:63,text:"Ongles — couper et nettoyer",details:"Coupe courts, lime les bords",done:false,prio:3,cat:"hebdo",days:[3,0]},
 {id:64,text:"Barbier — coupe + fade",details:"Toutes les 3-4 semaines",done:false,prio:2,cat:"hebdo",days:[6]},
 ];
-function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));if(!r||!r.length)return DEF_TODOS;if(r._v!==3){localStorage.removeItem(TK);return DEF_TODOS}return r.items}catch(e){return DEF_TODOS}}
-function sTodos(t){localStorage.setItem(TK,JSON.stringify({_v:3,items:t}))}
+function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));return r&&r.length?r:DEF_TODOS}catch(e){return DEF_TODOS}}
+function sTodos(t){localStorage.setItem(TK,JSON.stringify(t))}
 function todosForDay(){const dow=new Date().getDay();return gTodos().filter(t=>!t.days||t.days.includes(dow))}
 
 const TODO_CATS=[
