@@ -216,7 +216,53 @@ function gC(){try{const r=localStorage.getItem(HK);return r?JSON.parse(r):DEF_C}
 function sC(h){localStorage.setItem(HK,JSON.stringify(h))}
 function gG(){try{return JSON.parse(localStorage.getItem(GK))||{}}catch(e){return{}}}
 function sG(g){localStorage.setItem(GK,JSON.stringify(g))}
-function gTodos(){try{return JSON.parse(localStorage.getItem(TK))||[]}catch(e){return[]}}
+const DEF_TODOS=[
+// ─── GONI ───
+{id:1,text:"Dev GONI — features sprint en cours",details:"Continuer le dev des features prioritaires du backlog BMAD",done:false,prio:1,cat:"goni",created:"2026-03-11T08:00:00Z"},
+{id:2,text:"Deploy GONI sur Firebase",details:"Vérifier Firestore rules, Cloud Functions, et tester en staging avant prod",done:false,prio:1,cat:"goni",created:"2026-03-11T08:00:00Z"},
+{id:3,text:"Landing page GONI — optimiser conversion",details:"CTA plus visible, témoignages, pricing clair, SEO local",done:false,prio:2,cat:"goni",created:"2026-03-11T08:00:00Z"},
+{id:4,text:"Prospecter restaurants — cold visits",details:"Préparer pitch, battle cards vs concurrents, liste de restos cibles",done:false,prio:1,cat:"goni",created:"2026-03-11T08:00:00Z"},
+{id:5,text:"NF525 — vérifier conformité caisse",details:"Attestation LNE/Infocert, inaltérabilité, sécurisation, archivage",done:false,prio:2,cat:"goni",created:"2026-03-11T08:00:00Z"},
+{id:6,text:"Stripe Connect — intégrer paiements",details:"Split payments resto/plateforme, onboarding Stripe des restos",done:false,prio:2,cat:"goni",created:"2026-03-11T08:00:00Z"},
+
+// ─── PERSO-TOOLS ───
+{id:10,text:"Build app Finance Bulpan+GONI",details:"Sous-dossier /finance/, tracking revenus/dépenses GONI + perso",done:false,prio:2,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:11,text:"Update sw.js racine — ajouter ignore /glowup/",details:"if(url.includes('/glowup/'))return; dans le sw.js racine du repo",done:false,prio:3,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:12,text:"Créer icônes glowup-icon-192.png & 512.png",details:"PNG avec purpose 'any maskable', upload à la racine du repo",done:false,prio:3,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:13,text:"Deploy Glow Up app sur GitHub Pages",details:"Créer sous-dossier /glowup/, manifest.json + sw.js + index.html",done:false,prio:2,cat:"perso",created:"2026-03-11T08:00:00Z"},
+
+// ─── SANTÉ / GLOW UP ───
+{id:20,text:"Prendre RDV dermato — prescription trétinoïne",details:"0.025% pour commencer, 3x/semaine le soir. Obligatoire pour anti-aging",done:false,prio:1,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:21,text:"Acheter SPF 50 visage",details:"CeraVe ou La Roche-Posay. 2 doigts de crème, tous les jours même en hiver",done:false,prio:1,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:22,text:"Acheter Falim gum (chewing-gum dur)",details:"Pour développer le masséter → jawline. 3×5min/jour en alternant les côtés",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:23,text:"Acheter dermaroller 0.5mm",details:"1x/semaine le soir. Désinfecter avant/après. Pas de trétinoïne le même soir",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:24,text:"Acheter gua sha (jade ou quartz rose)",details:"Drainage lymphatique matin. Centre → oreilles → cou. 5 passages/zone",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:25,text:"Acheter sérum caféine yeux",details:"The Ordinary Caffeine Solution 5%. Anti-poches matin",done:false,prio:3,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:26,text:"Acheter niacinamide 10%",details:"The Ordinary Niacinamide 10% + Zinc 1%. Soirs sans trétinoïne",done:false,prio:3,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:27,text:"Acheter Minoxidil 5% barbe",details:"1ml matin + soir sur zones clairsemées. 6-12 mois pour résultats",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:28,text:"Acheter bandes blanchissantes dents",details:"1x/semaine. Ou RDV dentiste pour blanchiment 1x/an",done:false,prio:3,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:29,text:"Acheter rideaux occultants chambre",details:"Blackout total pour sommeil profond. Chambre 18-19°C",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:30,text:"Objectif < 13% bodyfat",details:"Track calories. Cut 2200-2400kcal. Révèle jawline, veines, structure faciale",done:false,prio:1,cat:"sante",created:"2026-03-11T08:00:00Z"},
+{id:31,text:"Corriger asymétrie lat gauche",details:"Rowing 1 bras : TOUJOURS gauche en premier, même charge G/D. Focus mental lat gauche sur tractions et pullovers",done:false,prio:2,cat:"sante",created:"2026-03-11T08:00:00Z"},
+
+// ─── STYLE ───
+{id:40,text:"Audit garde-robe — garder que le fit parfait",details:"Épaules alignées, slim pas serré. Virer tout ce qui baille. Fit > marque",done:false,prio:2,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:41,text:"Acheter 2-3 paires de chaussures propres",details:"Qualité > quantité. Premier truc qu'on regarde inconsciemment",done:false,prio:3,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:42,text:"Acheter produit coiffant mat (clay/pâte)",details:"Look naturel, pas gel. Barbier toutes les 3-4 semaines pour le fade",done:false,prio:3,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:43,text:"RDV barbier — coupe + sourcils",details:"Toutes les 3-4 semaines. Fade/taper. Sourcils structurés = regard changé",done:false,prio:2,cat:"perso",created:"2026-03-11T08:00:00Z"},
+{id:44,text:"Choisir un parfum signature",details:"Bleu de Chanel (safe), Dior Sauvage Elixir (puissant), YSL Y EDP. 2 sprays max",done:false,prio:3,cat:"perso",created:"2026-03-11T08:00:00Z"},
+
+// ─── ADMIN / FINANCE ───
+{id:50,text:"Vérifier statut micro-entreprise / URSSAF",details:"Cotisations, plafond CA, déclarations à jour",done:false,prio:2,cat:"admin",created:"2026-03-11T08:00:00Z"},
+{id:51,text:"Ouvrir compte bancaire pro si pas fait",details:"Stripe + facturation GONI. Obligatoire si CA > seuil",done:false,prio:2,cat:"finance",created:"2026-03-11T08:00:00Z"},
+{id:52,text:"Prévisionnel GONI — budget et runway",details:"MRR cible, CAC, LTV, break-even. Tracker dans l'app Finance",done:false,prio:2,cat:"finance",created:"2026-03-11T08:00:00Z"},
+{id:53,text:"Estimer impôts — mettre de côté chaque mois",details:"Revenus GONI + micro. Calculer le % à provisionner",done:false,prio:2,cat:"finance",created:"2026-03-11T08:00:00Z"},
+
+// ─── SOCIAL ───
+{id:60,text:"Pratiquer contact visuel détendu",details:"70% en écoute, 50% en parole. Pas fixe, naturel. Signal n°1 de confiance",done:false,prio:3,cat:"social",created:"2026-03-11T08:00:00Z"},
+{id:61,text:"Parler plus lentement — pauses volontaires",details:"Ralentir 20%, faire des pauses. Les silences ne sont pas gênants",done:false,prio:3,cat:"social",created:"2026-03-11T08:00:00Z"},
+];
+function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));return r&&r.length?r:DEF_TODOS}catch(e){return DEF_TODOS}}
 function sTodos(t){localStorage.setItem(TK,JSON.stringify(t))}
 
 const TODO_CATS=[
