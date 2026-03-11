@@ -271,7 +271,7 @@ const DEF_TODOS=[
 {id:63,text:"Ongles — couper et nettoyer",details:"Coupe courts, lime les bords. 2x/semaine. Deal breaker silencieux",done:false,prio:3,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
 {id:64,text:"Barbier — coupe + fade",details:"Toutes les 3-4 semaines. Une bonne coupe change plus un visage que n'importe quel soin",done:false,prio:2,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
 ];
-function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));return r&&r.length?r:DEF_TODOS}catch(e){return DEF_TODOS}}
+function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));if(!r||!r.length)return DEF_TODOS;const validCats=["matin","midi","sport","soir","hebdo"];const hasOld=r.some(t=>t.cat&&!validCats.includes(t.cat));if(hasOld){localStorage.removeItem(TK);return DEF_TODOS}return r}catch(e){return DEF_TODOS}}
 function sTodos(t){localStorage.setItem(TK,JSON.stringify(t))}
 
 const TODO_CATS=[
@@ -443,10 +443,6 @@ function rTodo(){
   }
 
   el.innerHTML=h;
-
-  // Bind quick input
-  const qi=document.getElementById("todoQuickInput");
-  if(qi)qi.focus();
 
   // Bind toggle & delete
   el.querySelectorAll('.todo-item[data-id]').forEach(item=>{
