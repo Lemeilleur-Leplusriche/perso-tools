@@ -273,7 +273,6 @@ const DEF_TODOS=[
 ];
 function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));return r&&r.length?r:DEF_TODOS}catch(e){return DEF_TODOS}}
 function sTodos(t){localStorage.setItem(TK,JSON.stringify(t))}
-function todosForDay(){const dow=new Date().getDay();return gTodos().filter(t=>!t.days||t.days.includes(dow))}
 
 const TODO_CATS=[
   {id:"matin",label:"Matin",emoji:"☀️",color:"var(--yellow)"},
@@ -351,26 +350,44 @@ const data=await res.json();const raw=data.content?.[0]?.text||"";const parsed=J
 const d=gD(cD);const ml=[...(d.meals||[]),{...parsed,id:Date.now(),raw:txt}];pD(cD,{meals:ml});inp.value="";rMeals();rProt()}catch(e){console.error(e)}btn.disabled=false;btn.textContent="\u2192"}
 
 /* ═══════════ TODO LIST ═══════════ */
+let todoDay=new Date().getDay(); // 0=dim ... 6=sam
+function todosForDow(d){return gTodos().filter(t=>!t.days||t.days.includes(d))}
 function rTodo(){
   const el=document.getElementById("todoContent");
-  const todos=todosForDay();
-  const allTodos=gTodos();
+  const all=gTodos();
+  const todos=todosForDow(todoDay);
   const active=todos.filter(t=>!t.done);
   const done=todos.filter(t=>t.done);
   const total=todos.length;
   const doneCount=done.length;
   const pct=total>0?Math.round(doneCount/total*100):0;
-  const dow=new Date().getDay();
-  const dayNames=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-
-  // Count by category
-  const catCounts={};
-  TODO_CATS.forEach(c=>{catCounts[c.id]=todos.filter(t=>t.cat===c.id&&!t.done).length});
+  const todayDow=new Date().getDay();
+  const dayLabels=["D","L","M","M","J","V","S"];
+  const dayFull=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 
   let h='';
 
+  // Day selector
+  h+='<div style="display:flex;gap:6px;margin-bottom:16px">';
+  for(let i=0;i<7;i++){
+    // Monday first: order 1,2,3,4,5,6,0
+    const d=[1,2,3,4,5,6,0][i];
+    const labels=["L","M","Me","J","V","S","D"];
+    const cnt=todosForDow(d).filter(t=>!t.done).length;
+    const isActive=d===todoDay;
+    const isToday=d===todayDow;
+    h+='<button onclick="todoDay='+d+';rTodo()" style="flex:1;padding:8px 0;border-radius:10px;border:1px solid '+(isActive?'var(--accent)':isToday?'var(--accent)44':'var(--border)')+';background:'+(isActive?'var(--accent)':'var(--card)')+';color:'+(isActive?'#fff':isToday?'var(--accent)':'var(--sub)')+';cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;text-align:center">';
+    h+='<div>'+labels[i]+'</div>';
+    h+='<div style="font-size:10px;font-weight:400;margin-top:2px;opacity:.7">'+cnt+'</div>';
+    h+='</button>';
+  }
+  h+='</div>';
+
+  // Title
+  const isToday=todoDay===todayDow;
+  h+='<div style="text-align:center;margin-bottom:12px;font-size:13px;font-weight:700;color:'+(isToday?'var(--accent)':'var(--sub)')+'">'+dayFull[todoDay]+(isToday?' — aujourd\'hui':'')+' · '+total+' tâches</div>';
+
   // Stats
-  h+='<div style="text-align:center;margin-bottom:12px;font-size:12px;color:var(--sub);font-weight:600">'+dayNames[dow]+' — '+total+' tâches aujourd\'hui</div>';
   h+='<div class="todo-stats">';
   h+='<div class="todo-stat"><div class="tv" style="color:var(--accent)">'+active.length+'</div><div class="tl">À faire</div></div>';
   h+='<div class="todo-stat"><div class="tv" style="color:var(--green)">'+doneCount+'</div><div class="tl">Fait</div></div>';
@@ -383,11 +400,11 @@ function rTodo(){
     h+='<div class="todo-prog-label">'+doneCount+'/'+total+' tâches complétées</div></div>';
   }
 
-  // Filters
+  // Filters by time slot
+  const catCounts={};
+  TODO_CATS.forEach(c=>{catCounts[c.id]=todos.filter(t=>t.cat===c.id&&!t.done).length});
   h+='<div class="todo-filters">';
   h+='<button class="todo-filter'+(todoFilter==='all'?' active':'')+'" onclick="todoFilter=\'all\';rTodo()">Tout<span class="tf-count">'+total+'</span></button>';
-  h+='<button class="todo-filter'+(todoFilter==='active'?' active':'')+'" onclick="todoFilter=\'active\';rTodo()">À faire<span class="tf-count">'+active.length+'</span></button>';
-  h+='<button class="todo-filter'+(todoFilter==='done'?' active':'')+'" onclick="todoFilter=\'done\';rTodo()">Fait<span class="tf-count">'+doneCount+'</span></button>';
   TODO_CATS.forEach(c=>{
     if(catCounts[c.id]>0||todoFilter===c.id){
       h+='<button class="todo-filter'+(todoFilter===c.id?' active':'')+'" onclick="todoFilter=\''+c.id+'\';rTodo()">'+c.emoji+' '+c.label+'<span class="tf-count">'+catCounts[c.id]+'</span></button>';
@@ -395,14 +412,9 @@ function rTodo(){
   });
   h+='</div>';
 
-  // Add button
-  h+='<div class="todo-add"><input type="text" id="todoQuickInput" placeholder="Ajouter une tâche rapide..." onkeydown="if(event.key===\'Enter\')addQuickTodo()"><button onclick="openAddTask()">+</button></div>';
-
   // Filtered list
   let filtered=todos;
-  if(todoFilter==='active')filtered=active;
-  else if(todoFilter==='done')filtered=done;
-  else if(todoFilter!=='all')filtered=todos.filter(t=>t.cat===todoFilter&&!t.done);
+  if(todoFilter!=='all')filtered=todos.filter(t=>t.cat===todoFilter);
 
   // Sort: keep original order (matin→soir), done at bottom
   filtered.sort((a,b)=>{
