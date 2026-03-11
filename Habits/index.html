@@ -217,62 +217,63 @@ function sC(h){localStorage.setItem(HK,JSON.stringify(h))}
 function gG(){try{return JSON.parse(localStorage.getItem(GK))||{}}catch(e){return{}}}
 function sG(g){localStorage.setItem(GK,JSON.stringify(g))}
 const DEF_TODOS=[
-// ═══ ☀️ MATIN — Réveil ═══
-{id:1,text:"Nettoyant doux visage",details:"Eau micellaire ou cleanser CeraVe/LRP. Eau tiède, pas chaude. Juste enlever le sébum de la nuit",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:2,text:"Gua Sha + massage lymphatique",details:"Sérum/huile sur peau. Pierre jade/quartz rose. Centre → oreilles → cou. 5 passages/zone. Toujours vers le bas sur le cou",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:3,text:"Eau froide / ice rolling",details:"Splash 30s ou ice roller 2min. Bas → haut, centre → extérieur. Resserre pores, dépuff, teint vif",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:4,text:"Sérum caféine yeux",details:"1 goutte sous chaque œil, tapoter avec l'annulaire. Coin interne → externe. The Ordinary Caffeine 5%",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:5,text:"Hydratant léger visage",details:"Gel-crème sur visage + cou. Attendre 2-3min avant SPF. CeraVe Lotion ou Neutrogena Hydro Boost",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:6,text:"SPF 50",details:"2 doigts de crème. Visage, cou, oreilles. Même en hiver, même couvert. Réappliquer toutes les 2h si exposition",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:7,text:"Minoxidil barbe (matin)",details:"1ml sur zones clairsemées. Laisser sécher 4h. Hydrater ensuite",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:8,text:"Dents — brossage matin",details:"2 min brossage. Bandes blanchissantes 1x/semaine",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:9,text:"Mewing — langue au palais",details:"Langue ENTIÈRE collée au palais, dents serrées, lèvres fermées, respire par le nez. 24/7",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:10,text:"Chewing-gum dur (Falim) 3×5min",details:"Alterner les côtés. Mouvements lents et puissants. Développe le masséter → jawline",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:11,text:"Sourire large tenu 3×15 (10s hold)",details:"Le plus large possible en montrant les dents. Tiens 10s. Tu dois sentir les pommettes brûler",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:12,text:"Transferts joues gonflées 3×20",details:"Gonfle d'air au max. Transfère d'une joue à l'autre lentement. Tonifie les joues",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:13,text:"Coiffure — produit mat",details:"Clay/pâte pour look naturel. Pas de gel. Barbier toutes les 3-4 semaines pour fade/taper",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:14,text:"Outfit check — fit + max 3 couleurs",details:"Épaules alignées, slim pas serré. Noir/blanc/navy/olive/terre. Chaussures propres",done:false,prio:2,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:15,text:"Parfum — 2 sprays max",details:"1 poignet (frotte pas) + 1 cou. Bleu de Chanel / Dior Sauvage Elixir / YSL Y EDP",done:false,prio:3,cat:"matin",created:"2026-03-11T08:00:00Z"},
-{id:16,text:"Posture — épaules arrière + menton droit",details:"Omoplates dans les poches arrière. Sternum relevé. Menton parallèle au sol. Fil au sommet du crâne",done:false,prio:1,cat:"matin",created:"2026-03-11T08:00:00Z"},
+// ═══ ☀️ MATIN ═══ (pas de days = tous les jours)
+{id:1,text:"Nettoyant doux visage",details:"Eau micellaire ou cleanser CeraVe/LRP. Eau tiède, pas chaude",done:false,prio:1,cat:"matin"},
+{id:2,text:"Gua Sha + massage lymphatique",details:"Sérum/huile sur peau. Centre → oreilles → cou. 5 passages/zone",done:false,prio:1,cat:"matin"},
+{id:3,text:"Eau froide / ice rolling",details:"Splash 30s ou ice roller 2min. Bas → haut, centre → extérieur",done:false,prio:1,cat:"matin"},
+{id:4,text:"Sérum caféine yeux",details:"1 goutte sous chaque œil, annulaire. The Ordinary Caffeine 5%",done:false,prio:2,cat:"matin"},
+{id:5,text:"Hydratant léger visage",details:"Gel-crème visage + cou. Attendre 2-3min avant SPF",done:false,prio:1,cat:"matin"},
+{id:6,text:"SPF 50",details:"2 doigts. Visage, cou, oreilles. Même en hiver",done:false,prio:1,cat:"matin"},
+{id:7,text:"Minoxidil barbe (matin)",details:"1ml zones clairsemées. Sécher 4h. Hydrater ensuite",done:false,prio:2,cat:"matin"},
+{id:8,text:"Dents — brossage matin",details:"2 min brossage",done:false,prio:1,cat:"matin"},
+{id:9,text:"Mewing — langue au palais",details:"Langue ENTIÈRE au palais, dents serrées, lèvres fermées, nez. 24/7",done:false,prio:1,cat:"matin"},
+{id:10,text:"Jawline exerciser 3×20/côté",details:"Molaires, mords 2s, relâche lent. Côté faible d'abord. 30s repos entre séries. Rincer après",done:false,prio:1,cat:"matin",days:[1,2,4,5]},
+{id:11,text:"Sourire large tenu 3×15 (10s)",details:"Le plus large possible, dents visibles. Tiens 10s. Pommettes brûlent",done:false,prio:2,cat:"matin"},
+{id:12,text:"Transferts joues gonflées 3×20",details:"Gonfle d'air max. Transfère lentement d'une joue à l'autre",done:false,prio:2,cat:"matin"},
+{id:13,text:"Coiffure — produit mat",details:"Clay/pâte, look naturel. Pas de gel",done:false,prio:2,cat:"matin"},
+{id:14,text:"Outfit check — fit + 3 couleurs max",details:"Épaules alignées, slim pas serré. Chaussures propres",done:false,prio:2,cat:"matin"},
+{id:15,text:"Parfum — 2 sprays max",details:"1 poignet + 1 cou. Frotte pas",done:false,prio:3,cat:"matin"},
+{id:16,text:"Posture — épaules arrière + menton",details:"Omoplates dans les poches. Menton parallèle au sol",done:false,prio:1,cat:"matin"},
 
 // ═══ 🌤️ MIDI ═══
-{id:20,text:"Squint + Open yeux 3×15",details:"Plisse fort les yeux puis ouvre grand. Contraction autour des yeux. Réduit poches, regard vif",done:false,prio:2,cat:"midi",created:"2026-03-11T08:00:00Z"},
-{id:21,text:"Lever sourcils résistance 3×12 (5s hold)",details:"Doigts sur le front au-dessus des sourcils. Lève contre la résistance. Tiens 5s. Ouvre le regard",done:false,prio:2,cat:"midi",created:"2026-03-11T08:00:00Z"},
-{id:22,text:"Mouvements latéraux mâchoire 3×15/côté",details:"Main sur le côté de la mâchoire, pousse contre la résistance. Alterne. Muscles profonds",done:false,prio:2,cat:"midi",created:"2026-03-11T08:00:00Z"},
-{id:23,text:"Boire 2.5-3L d'eau",details:"Régulièrement toute la journée. Pas de sodas, pas de jus. Eau plate et thé",done:false,prio:1,cat:"midi",created:"2026-03-11T08:00:00Z"},
+{id:20,text:"Squint + Open yeux 3×15",details:"Plisse fort puis ouvre grand. Réduit poches, regard vif",done:false,prio:2,cat:"midi"},
+{id:21,text:"Lever sourcils résistance 3×12 (5s)",details:"Doigts au-dessus des sourcils, lève contre résistance. 5j/sem",done:false,prio:2,cat:"midi",days:[1,2,3,4,5]},
+{id:22,text:"Mouvements latéraux mâchoire 3×15/côté",details:"Main côté mâchoire, pousse contre résistance. 5j/sem",done:false,prio:2,cat:"midi",days:[1,2,3,4,5]},
+{id:23,text:"Boire 2.5-3L d'eau",details:"Régulièrement. Pas de sodas/jus. Eau plate et thé",done:false,prio:1,cat:"midi"},
 
-// ═══ 💪 SPORT ═══
-{id:30,text:"Séance PPL (Push/Pull/Legs)",details:"Programme PPL x2. Surcharge progressive. Log tes poids. V-taper = lat raises + tractions larges + taille fine. 82kg 1m80",done:false,prio:1,cat:"sport",created:"2026-03-11T08:00:00Z"},
-{id:31,text:"Asymétrie lat gauche — focus",details:"Rowing 1 bras : TOUJOURS gauche en premier, même charge G/D. Focus mental lat gauche sur tractions et pullovers",done:false,prio:1,cat:"sport",created:"2026-03-11T08:00:00Z"},
-{id:32,text:"Étirements post-muscu 5min",details:"Haut : pec porte, épaule croisée, lat stretch (insiste gauche +10s). Dos : cat-cow, rotation spinale. Bas : fléchisseur hanche, pigeon",done:false,prio:1,cat:"sport",created:"2026-03-11T08:00:00Z"},
-{id:33,text:"Farmer walks + wrist curls",details:"Farmer : haltères les + lourds, marche 30-40s. Wrist curls : 3×15-20 supination + pronation. 2-3x/semaine",done:false,prio:2,cat:"sport",created:"2026-03-11T08:00:00Z"},
-{id:34,text:"Neck curls 3×15-20",details:"Allongé, tête dans le vide. Remonte en contractant. Mouvement LENT. Un cou musclé encadre le visage. 3x/semaine",done:false,prio:2,cat:"sport",created:"2026-03-11T08:00:00Z"},
-{id:35,text:"Cardio (selon le jour)",details:"Mar : marche inclinée 25min. Jeu : HIIT Tabata 4min. Sam : marche légère 10min. Dim : sport fun 30min",done:false,prio:2,cat:"sport",created:"2026-03-11T08:00:00Z"},
+// ═══ 💪 SPORT ═══ (L-S = jours muscu, D = accessoires)
+{id:30,text:"Séance PPL (Push/Pull/Legs)",details:"PPL x2. Surcharge progressive. Log tes poids. L:Push H, M:Pull H, Me:Legs Q, J:Push V, V:Pull V, S:Legs I, D:Access",done:false,prio:1,cat:"sport"},
+{id:31,text:"Asymétrie lat gauche — focus",details:"Rowing 1 bras : GAUCHE d'abord, même charge G/D. Focus mental lat gauche",done:false,prio:1,cat:"sport",days:[2,5]},
+{id:32,text:"Étirements post-muscu 5min",details:"Pec porte, épaule croisée, lat stretch (gauche +10s). Cat-cow, pigeon",done:false,prio:1,cat:"sport"},
+{id:33,text:"Farmer walks + wrist curls",details:"Farmer : haltères lourds, 30-40s. Wrist curls : 3×15-20",done:false,prio:2,cat:"sport",days:[2,4,6]},
+{id:34,text:"Neck curls 3×15-20",details:"Allongé, tête dans le vide. Mouvement LENT. Cou musclé = visage encadré",done:false,prio:2,cat:"sport",days:[2,4,6]},
+{id:35,text:"Cardio",details:"Mar: marche inclinée 25min. Jeu: HIIT Tabata 4min. Sam: marche 10min. Dim: sport fun 30min",done:false,prio:2,cat:"sport",days:[2,4,6,0]},
 
 // ═══ 🌙 SOIR ═══
-{id:40,text:"Contrôler le sel au dîner",details:"Pas de plats transformés, chips, fromage le soir. Cuisine simple. Sel dîner = visage puffé le matin",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:41,text:"Kiss the ceiling 3×12 (10s hold)",details:"Tête en arrière, lèvres vers le plafond. Tiens 10s. Définit la jawline vue de profil",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:42,text:"Serrer dents tenu 3×12 (5s hold)",details:"Serre les dents fort 5s, relâche. Contraction au-dessus des tempes. Visage anguleux",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:43,text:"Massage corrugateur 2×1min",details:"Mouvements circulaires entre les sourcils. DÉTENDRE, pas renforcer. Évite rides du lion",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:44,text:"Double nettoyage visage",details:"1) Huile démaquillante/baume (même sans maquillage, pour le SPF). 2) Cleanser doux. Eau tiède",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:45,text:"Trétinoïne 0.025% (3x/semaine)",details:"Peau SÈCHE, 1 grain de riz. Évite contour yeux + coins nez. Toujours SPF le lendemain",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:46,text:"Niacinamide 10% (jours sans trétinoïne)",details:"3-4 gouttes tout le visage. Resserre pores, unifie teint. The Ordinary. 4x/semaine",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:47,text:"Hydratant riche soir",details:"CeraVe Crème Hydratante. Visage + cou. Céramides = barrière cutanée. La peau se répare la nuit",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:48,text:"Minoxidil barbe (soir)",details:"1ml sur zones clairsemées. Laisser sécher 4h avant de laver. Hydrater ensuite",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:49,text:"Hydrater corps après douche",details:"Lotion/crème céramides tout le corps. Coudes, genoux, mains. Peau encore humide",done:false,prio:2,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:50,text:"Dents — brossage + fil dentaire",details:"2 min brossage + fil dentaire soir. Non-négociable",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:51,text:"Pas d'écran 30min avant dodo",details:"Pose le tel. Mode nuit dès 21h. Lis, étire-toi, médite. Lumière bleue = mauvais sommeil",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
-{id:52,text:"Dormir sur le dos — 7-8h",details:"Tête surélevée. Chambre 18-19°C, blackout total. Sur le dos = drainage naturel, pas de plis faciaux",done:false,prio:1,cat:"soir",created:"2026-03-11T08:00:00Z"},
+{id:40,text:"Contrôler le sel au dîner",details:"Pas de transformé, chips, fromage le soir. Sel dîner = visage puffé",done:false,prio:1,cat:"soir"},
+{id:41,text:"Kiss the ceiling 3×12 (10s)",details:"Tête en arrière, lèvres vers plafond. Jawline de profil",done:false,prio:2,cat:"soir",days:[1,2,3,4,5]},
+{id:42,text:"Serrer dents tenu 3×12 (5s)",details:"Serre fort 5s, relâche. Tempes. Visage anguleux",done:false,prio:2,cat:"soir",days:[1,2,3,4,5]},
+{id:43,text:"Massage corrugateur 2×1min",details:"Circulaires entre sourcils. DÉTENDRE. Évite rides du lion",done:false,prio:2,cat:"soir"},
+{id:44,text:"Double nettoyage visage",details:"1) Huile/baume (pour le SPF). 2) Cleanser doux. Eau tiède",done:false,prio:1,cat:"soir"},
+{id:45,text:"Trétinoïne 0.025%",details:"Peau SÈCHE, 1 grain de riz. Évite yeux + coins nez. SPF le lendemain",done:false,prio:1,cat:"soir",days:[1,3,5]},
+{id:46,text:"Niacinamide 10%",details:"3-4 gouttes tout le visage. Resserre pores. Jours SANS trétinoïne",done:false,prio:2,cat:"soir",days:[2,4,6,0]},
+{id:47,text:"Hydratant riche soir",details:"CeraVe Crème. Visage + cou. Céramides. La peau se répare la nuit",done:false,prio:1,cat:"soir"},
+{id:48,text:"Minoxidil barbe (soir)",details:"1ml zones clairsemées. Sécher 4h",done:false,prio:2,cat:"soir"},
+{id:49,text:"Hydrater corps après douche",details:"Céramides tout le corps. Peau encore humide",done:false,prio:2,cat:"soir"},
+{id:50,text:"Dents — brossage + fil dentaire",details:"2 min brossage + fil. Non-négociable",done:false,prio:1,cat:"soir"},
+{id:51,text:"Pas d'écran 30min avant dodo",details:"Mode nuit dès 21h. Lis, étire-toi, médite",done:false,prio:1,cat:"soir"},
+{id:52,text:"Dormir sur le dos — 7-8h",details:"18-19°C, blackout. Sur le dos = drainage, pas de plis",done:false,prio:1,cat:"soir"},
 
 // ═══ 📅 HEBDO ═══
-{id:60,text:"Dermaroller 0.5mm (1x/semaine soir)",details:"Peau propre. 4-6 passages chaque direction. Désinfecter avant/après. Pas de trétinoïne ce soir",done:false,prio:2,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
-{id:61,text:"Bandes blanchissantes dents",details:"1x/semaine. Ou blanchiment dentiste 1x/an",done:false,prio:3,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
-{id:62,text:"Sourcils — check et entretien",details:"Éliminer poils entre sourcils + ceux qui dépassent. Pro toutes les 4-6 semaines",done:false,prio:3,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
-{id:63,text:"Ongles — couper et nettoyer",details:"Coupe courts, lime les bords. 2x/semaine. Deal breaker silencieux",done:false,prio:3,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
-{id:64,text:"Barbier — coupe + fade",details:"Toutes les 3-4 semaines. Une bonne coupe change plus un visage que n'importe quel soin",done:false,prio:2,cat:"hebdo",created:"2026-03-11T08:00:00Z"},
+{id:60,text:"Dermaroller 0.5mm",details:"Peau propre. 4-6 passages. Désinfecter. Pas de trétinoïne ce soir",done:false,prio:2,cat:"hebdo",days:[0]},
+{id:61,text:"Bandes blanchissantes dents",details:"1x/semaine",done:false,prio:3,cat:"hebdo",days:[0]},
+{id:62,text:"Sourcils — check et entretien",details:"Poils entre sourcils + ceux qui dépassent",done:false,prio:3,cat:"hebdo",days:[0]},
+{id:63,text:"Ongles — couper et nettoyer",details:"Coupe courts, lime les bords",done:false,prio:3,cat:"hebdo",days:[3,0]},
+{id:64,text:"Barbier — coupe + fade",details:"Toutes les 3-4 semaines",done:false,prio:2,cat:"hebdo",days:[6]},
 ];
-function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));if(!r||!r.length)return DEF_TODOS;const validCats=["matin","midi","sport","soir","hebdo"];const hasOld=r.some(t=>t.cat&&!validCats.includes(t.cat));if(hasOld){localStorage.removeItem(TK);return DEF_TODOS}return r}catch(e){return DEF_TODOS}}
-function sTodos(t){localStorage.setItem(TK,JSON.stringify(t))}
+function gTodos(){try{const r=JSON.parse(localStorage.getItem(TK));if(!r||!r.length)return DEF_TODOS;if(r._v!==3){localStorage.removeItem(TK);return DEF_TODOS}return r.items}catch(e){return DEF_TODOS}}
+function sTodos(t){localStorage.setItem(TK,JSON.stringify({_v:3,items:t}))}
+function todosForDay(){const dow=new Date().getDay();return gTodos().filter(t=>!t.days||t.days.includes(dow))}
 
 const TODO_CATS=[
   {id:"matin",label:"Matin",emoji:"☀️",color:"var(--yellow)"},
@@ -352,12 +353,15 @@ const d=gD(cD);const ml=[...(d.meals||[]),{...parsed,id:Date.now(),raw:txt}];pD(
 /* ═══════════ TODO LIST ═══════════ */
 function rTodo(){
   const el=document.getElementById("todoContent");
-  const todos=gTodos();
+  const todos=todosForDay();
+  const allTodos=gTodos();
   const active=todos.filter(t=>!t.done);
   const done=todos.filter(t=>t.done);
   const total=todos.length;
   const doneCount=done.length;
   const pct=total>0?Math.round(doneCount/total*100):0;
+  const dow=new Date().getDay();
+  const dayNames=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 
   // Count by category
   const catCounts={};
@@ -366,9 +370,10 @@ function rTodo(){
   let h='';
 
   // Stats
+  h+='<div style="text-align:center;margin-bottom:12px;font-size:12px;color:var(--sub);font-weight:600">'+dayNames[dow]+' — '+total+' tâches aujourd\'hui</div>';
   h+='<div class="todo-stats">';
   h+='<div class="todo-stat"><div class="tv" style="color:var(--accent)">'+active.length+'</div><div class="tl">À faire</div></div>';
-  h+='<div class="todo-stat"><div class="tv" style="color:var(--green)">'+doneCount+'</div><div class="tl">Terminées</div></div>';
+  h+='<div class="todo-stat"><div class="tv" style="color:var(--green)">'+doneCount+'</div><div class="tl">Fait</div></div>';
   h+='<div class="todo-stat"><div class="tv" style="color:'+(pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--sub)')+'">'+pct+'%</div><div class="tl">Complétion</div></div>';
   h+='</div>';
 
@@ -461,8 +466,7 @@ function rTodo(){
 
 function todoItemHTML(t,i){
   const cat=TODO_CATS.find(c=>c.id===t.cat);
-  const prioClass=t.prio===1?'p1':t.prio===2?'p2':'p3';
-  const prioLabel=t.prio===1?'Urgent':t.prio===2?'Important':'Normal';
+  const dayLetters=["D","L","M","Me","J","V","S"];
   let h='<div class="todo-item'+(t.done?' done':'')+'" data-id="'+t.id+'" style="animation-delay:'+i*30+'ms">';
   h+='<div class="todo-chk"></div>';
   h+='<div class="todo-body">';
@@ -470,8 +474,8 @@ function todoItemHTML(t,i){
   if(t.details){h+='<div style="font-size:12px;color:var(--dim);margin-top:3px;line-height:1.4">'+esc(t.details)+'</div>';}
   h+='<div class="todo-meta">';
   if(cat)h+='<span class="todo-cat" style="background:'+cat.color+'15;color:'+cat.color+'">'+cat.emoji+' '+cat.label+'</span>';
-  if(t.prio)h+='<span class="todo-prio '+prioClass+'">'+prioLabel+'</span>';
-  if(t.created){const d=new Date(t.created);h+='<span class="todo-date">'+d.toLocaleDateString("fr-FR",{day:"numeric",month:"short"})+'</span>';}
+  if(t.days){h+='<span class="todo-date">'+t.days.map(d=>dayLetters[d]).join(' ')+'</span>';}
+  else{h+='<span class="todo-date">Quotidien</span>';}
   h+='</div></div>';
   h+='<button class="todo-del" data-tid="'+t.id+'">×</button>';
   h+='</div>';
