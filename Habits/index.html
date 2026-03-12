@@ -454,10 +454,13 @@ function rTodo(){
     '</div>';
   }
 
-  // Clear done button
+  // Action buttons
+  h+='<div style="text-align:center;margin-top:16px;display:flex;gap:8px;justify-content:center">';
   if(doneCount>0){
-    h+='<div style="text-align:center;margin-top:16px"><button onclick="clearDoneTodos()" style="background:none;border:1px solid var(--border);border-radius:10px;color:var(--sub);padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑 Supprimer les terminées</button></div>';
+    h+='<button onclick="clearDoneTodos()" style="background:none;border:1px solid var(--border);border-radius:10px;color:var(--sub);padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑 Supprimer terminées</button>';
   }
+  h+='<button onclick="resetTodos()" style="background:none;border:1px solid var(--border);border-radius:10px;color:var(--sub);padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🔄 Reset défaut</button>';
+  h+='</div>';
 
   el.innerHTML=h;
 
@@ -587,6 +590,12 @@ function clearDoneTodos(){
   if(!confirm("Supprimer toutes les tâches terminées ?"))return;
   const todos=gTodos().filter(t=>!t.done);
   sTodos(todos);
+  rTodo();
+}
+
+function resetTodos(){
+  if(!confirm("Remettre toutes les tâches par défaut ? Les tâches custom seront perdues."))return;
+  sTodos(DEF_TODOS);
   rTodo();
 }
 
