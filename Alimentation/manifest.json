@@ -1,8 +1,8 @@
 {
   "name": "Recomp Tracker",
   "short_name": "Recomp",
-  "start_url": "/perso-tools/alimentation/",
-  "scope": "/perso-tools/alimentation/",
+  "start_url": "/perso-tools/Alimentation/",
+  "scope": "/perso-tools/Alimentation/",
   "display": "standalone",
   "background_color": "#111",
   "theme_color": "#e8734a",
