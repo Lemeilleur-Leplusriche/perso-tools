@@ -1,0 +1,14 @@
+{
+  "name": "Recomp Tracker",
+  "short_name": "Recomp",
+  "start_url": "/perso-tools/recomp/",
+  "scope": "/perso-tools/recomp/",
+  "display": "standalone",
+  "background_color": "#111",
+  "theme_color": "#e8734a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "../hub-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "../hub-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
