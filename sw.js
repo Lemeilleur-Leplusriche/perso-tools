@@ -10,6 +10,6 @@ self.addEventListener('fetch',e=>{
   if(url.includes('/Better/'))return;
   if(url.includes('fonts.googleapis.com'))return;
   if(url.includes('fonts.gstatic.com'))return;
-  if(url.includes('/recomp/'))return;
+  if(url.includes('/Alimentation/'))return;
   e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(C).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request)))
 });
