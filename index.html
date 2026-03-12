@@ -428,11 +428,24 @@ setsWrap.appendChild(h("button",{style:{background:"var(--bg)",border:"1px dashe
 
 card.appendChild(setsWrap);
 
-const exBottom=h("div",{style:{padding:"0 12px 12px",display:"flex",gap:"6px",alignItems:"center"}});
+const exBottom=h("div",{style:{padding:"0 12px 6px",display:"flex",gap:"6px",alignItems:"center"}});
 exBottom.appendChild(h("button",{style:{background:"var(--bg)",border:"1px solid var(--border)",borderRadius:"8px",color:"var(--accent)",padding:"6px 12px",fontSize:"12px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit",flex:"1"},onClick:()=>{ST=true;tStart(ex.rest)}},"\u23F1 "+Math.floor(ex.rest/60)+"m"+(ex.rest%60?ex.rest%60+"s":"")));
 const sug=db.pr[ex.id]?.suggest;
 if(sug)exBottom.appendChild(h("div",{style:{fontSize:"10px",color:"var(--green)",fontWeight:"600",flex:"1",textAlign:"right"}},"⬆ Monte a "+(sug)+"kg"));
 card.appendChild(exBottom);
+
+const bestW=ex.sd.filter(s=>s.w).map(s=>parseFloat(s.w)).filter(n=>!isNaN(n));
+const curMax=bestW.length?Math.max(...bestW):null;
+if(curMax){
+const nwRow=h("div",{style:{padding:"0 12px 12px",display:"flex",gap:"6px"}});
+const saved=db.dw[ex.id];
+const isSame=saved===curMax;
+const isUp=saved===curMax+2;
+nwRow.appendChild(h("button",{style:{flex:"1",padding:"6px",borderRadius:"8px",border:"1px solid "+(isSame?"var(--blue)":"var(--border)"),background:isSame?"rgba(96,165,250,.1)":"var(--bg)",color:isSame?"var(--blue)":"var(--dim)",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},
+onClick:()=>{db.dw[ex.id]=curMax;save();ren()}},(isSame?"\u2713 ":"")+"Garder "+curMax+"kg"));
+nwRow.appendChild(h("button",{style:{flex:"1",padding:"6px",borderRadius:"8px",border:"1px solid "+(isUp?"var(--green)":"var(--border)"),background:isUp?"rgba(74,222,128,.1)":"var(--bg)",color:isUp?"var(--green)":"var(--dim)",fontSize:"11px",fontWeight:"600",cursor:"pointer",fontFamily:"inherit"},
+onClick:()=>{db.dw[ex.id]=curMax+2;save();ren()}},(isUp?"\u2713 ":"")+"\u2B06 "+(curMax+2)+"kg sem pro"));
+card.appendChild(nwRow)}
 
 ct.appendChild(card)});
 
